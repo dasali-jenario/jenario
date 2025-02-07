@@ -47,7 +47,8 @@ const translations = {
         no_results: "No results found",
         favorites: "Favorites",
         add_to_favorites: "Add to favorites",
-        remove_from_favorites: "Remove from favorites"
+        remove_from_favorites: "Remove from favorites",
+        pace: "Pace"
     },
     de: {
         title: "Einheitenumrechner & Wissenschaftliche Werkzeuge",
@@ -96,7 +97,8 @@ const translations = {
         no_results: "Keine Ergebnisse gefunden",
         favorites: "Favoriten",
         add_to_favorites: "Zu Favoriten hinzufügen",
-        remove_from_favorites: "Aus Favoriten entfernen"
+        remove_from_favorites: "Aus Favoriten entfernen",
+        pace: "Tempo"
     },
     fr: {
         title: "Convertisseur d'Unités & Outils Scientifiques",
@@ -145,7 +147,8 @@ const translations = {
         no_results: "No results found",
         favorites: "Favorites",
         add_to_favorites: "Add to favorites",
-        remove_from_favorites: "Remove from favorites"
+        remove_from_favorites: "Remove from favorites",
+        pace: "Allure"
     },
     it: {
         title: "Convertitore di Unità & Strumenti Scientifici",
@@ -194,7 +197,8 @@ const translations = {
         no_results: "No results found",
         favorites: "Favorites",
         add_to_favorites: "Add to favorites",
-        remove_from_favorites: "Remove from favorites"
+        remove_from_favorites: "Remove from favorites",
+        pace: "Ritmo"
     },
     es: {
         title: "Convertidor de Unidades & Herramientas Científicas",
@@ -243,7 +247,8 @@ const translations = {
         no_results: "No results found",
         favorites: "Favorites",
         add_to_favorites: "Add to favorites",
-        remove_from_favorites: "Remove from favorites"
+        remove_from_favorites: "Remove from favorites",
+        pace: "Ritmo"
     }
 };
 
@@ -416,6 +421,14 @@ const unitData = {
         poundPerCubicFoot: 16.018463,
         poundPerCubicInch: 27679.905,
         poundPerGallon: 119.826427
+    },
+    pace: {
+        minPerKm: 1,           // Base unit (minutes per kilometer)
+        minPerMile: 1.60934,   // minutes per mile
+        kmPerHour: 0.06,       // kilometers per hour (converted to min/km)
+        milesPerHour: 0.0372823,  // miles per hour (converted to min/km)
+        secPerKm: 0.0166667,   // seconds per kilometer
+        secPerMile: 0.0268224  // seconds per mile
     }
 };
 
@@ -456,7 +469,8 @@ let conversionHistories = JSON.parse(localStorage.getItem('conversionHistories')
     force: [],
     frequency: [],
     angle: [],
-    density: []
+    density: [],
+    pace: []
 };
 
 // Load calculator and physics histories
@@ -1431,6 +1445,8 @@ function convert() {
         const fromPrefix = unitData.scientific[fromUnit];
         const toPrefix = unitData.scientific[toUnit];
         result = fromValue * (fromPrefix.value / toPrefix.value);
+    } else if (category === 'pace') {
+        result = convertPace(fromValue, fromUnit, toUnit);
     } else {
         const baseValue = fromValue * unitData[category][fromUnit];
         result = baseValue / unitData[category][toUnit];
@@ -1498,6 +1514,50 @@ function convertTemperature(value, fromUnit, toUnit) {
             return (celsius * 9/5) + 32;
         case 'kelvin':
             return celsius + 273.15;
+    }
+}
+
+// Pace conversion
+function convertPace(value, fromUnit, toUnit) {
+    if (fromUnit === toUnit) return value;
+    
+    let pace;
+    // Convert to pace format
+    switch (fromUnit) {
+        case 'minPerKm':
+            pace = value;
+            break;
+        case 'minPerMile':
+            pace = value;
+            break;
+        case 'kmPerHour':
+            pace = 60 / value;
+            break;
+        case 'milesPerHour':
+            pace = 60 / value;
+            break;
+        case 'secPerKm':
+            pace = 1 / value;
+            break;
+        case 'secPerMile':
+            pace = 1 / value;
+            break;
+    }
+    
+    // Convert from pace format to target unit
+    switch (toUnit) {
+        case 'minPerKm':
+            return pace;
+        case 'minPerMile':
+            return pace;
+        case 'kmPerHour':
+            return 60 / pace;
+        case 'milesPerHour':
+            return 60 / pace;
+        case 'secPerKm':
+            return 1 / pace;
+        case 'secPerMile':
+            return 1 / pace;
     }
 }
 
