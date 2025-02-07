@@ -57,8 +57,247 @@ function initializeCalculator() {
     });
 }
 
+// Chart variables
+let freefallChart = null;
+let suvatChart = null;
+let projectileChart = null;
+let forcesChart = null;
+
 // Initialize physics calculators
 function initializePhysics() {
+    // Initialize charts
+    const freefallCtx = document.getElementById('freefallChart').getContext('2d');
+    const suvatCtx = document.getElementById('suvatChart').getContext('2d');
+    const projectileCtx = document.getElementById('projectileChart').getContext('2d');
+    const forcesCtx = document.getElementById('forcesDiagram').getContext('2d');
+
+    // Initialize empty charts
+    freefallChart = new Chart(freefallCtx, {
+        type: 'line',
+        data: {
+            labels: [],
+            datasets: [{
+                label: 'Height (m)',
+                data: [],
+                borderColor: '#4C51BF',
+                tension: 0.4,
+                fill: false
+            }, {
+                label: 'Velocity (m/s)',
+                data: [],
+                borderColor: '#48BB78',
+                tension: 0.4,
+                fill: false
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            interaction: {
+                intersect: false,
+                mode: 'index'
+            },
+            scales: {
+                x: {
+                    title: {
+                        display: true,
+                        text: 'Time (s)',
+                        font: {
+                            size: 14,
+                            weight: 'bold'
+                        }
+                    },
+                    grid: {
+                        color: 'rgba(0, 0, 0, 0.1)'
+                    }
+                },
+                y: {
+                    title: {
+                        display: true,
+                        text: 'Height (m) / Velocity (m/s)',
+                        font: {
+                            size: 14,
+                            weight: 'bold'
+                        }
+                    },
+                    grid: {
+                        color: 'rgba(0, 0, 0, 0.1)'
+                    }
+                }
+            },
+            plugins: {
+                legend: {
+                    position: 'top',
+                    labels: {
+                        padding: 20,
+                        font: {
+                            size: 12
+                        }
+                    }
+                },
+                tooltip: {
+                    backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                    padding: 12,
+                    titleFont: {
+                        size: 14
+                    },
+                    bodyFont: {
+                        size: 13
+                    }
+                }
+            }
+        }
+    });
+
+    suvatChart = new Chart(suvatCtx, {
+        type: 'line',
+        data: {
+            labels: [],
+            datasets: [{
+                label: 'Position (m)',
+                data: [],
+                borderColor: '#4C51BF',
+                tension: 0.4,
+                fill: false
+            }, {
+                label: 'Velocity (m/s)',
+                data: [],
+                borderColor: '#48BB78',
+                tension: 0.4,
+                fill: false
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            interaction: {
+                intersect: false,
+                mode: 'index'
+            },
+            scales: {
+                x: {
+                    title: {
+                        display: true,
+                        text: 'Time (s)',
+                        font: {
+                            size: 14,
+                            weight: 'bold'
+                        }
+                    },
+                    grid: {
+                        color: 'rgba(0, 0, 0, 0.1)'
+                    }
+                },
+                y: {
+                    title: {
+                        display: true,
+                        text: 'Position (m) / Velocity (m/s)',
+                        font: {
+                            size: 14,
+                            weight: 'bold'
+                        }
+                    },
+                    grid: {
+                        color: 'rgba(0, 0, 0, 0.1)'
+                    }
+                }
+            },
+            plugins: {
+                legend: {
+                    position: 'top',
+                    labels: {
+                        padding: 20,
+                        font: {
+                            size: 12
+                        }
+                    }
+                },
+                tooltip: {
+                    backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                    padding: 12,
+                    titleFont: {
+                        size: 14
+                    },
+                    bodyFont: {
+                        size: 13
+                    }
+                }
+            }
+        }
+    });
+
+    projectileChart = new Chart(projectileCtx, {
+        type: 'scatter',
+        data: {
+            datasets: [{
+                label: 'Trajectory',
+                data: [],
+                borderColor: '#4C51BF',
+                backgroundColor: '#4C51BF',
+                showLine: true,
+                tension: 0.4,
+                fill: false
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            interaction: {
+                intersect: false,
+                mode: 'index'
+            },
+            scales: {
+                x: {
+                    title: {
+                        display: true,
+                        text: 'Distance (m)',
+                        font: {
+                            size: 14,
+                            weight: 'bold'
+                        }
+                    },
+                    grid: {
+                        color: 'rgba(0, 0, 0, 0.1)'
+                    }
+                },
+                y: {
+                    title: {
+                        display: true,
+                        text: 'Height (m)',
+                        font: {
+                            size: 14,
+                            weight: 'bold'
+                        }
+                    },
+                    grid: {
+                        color: 'rgba(0, 0, 0, 0.1)'
+                    }
+                }
+            },
+            plugins: {
+                legend: {
+                    position: 'top',
+                    labels: {
+                        padding: 20,
+                        font: {
+                            size: 12
+                        }
+                    }
+                },
+                tooltip: {
+                    backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                    padding: 12,
+                    titleFont: {
+                        size: 14
+                    },
+                    bodyFont: {
+                        size: 13
+                    }
+                }
+            }
+        }
+    });
+
     // Physics tab switching
     const physicsTabs = document.querySelectorAll('.physics-tab');
     const physicsSections = document.querySelectorAll('.physics-section');
@@ -80,6 +319,81 @@ function initializePhysics() {
     document.getElementById('calculateSuvat').addEventListener('click', calculateSuvat);
     document.getElementById('calculateProjectile').addEventListener('click', calculateProjectile);
     document.getElementById('calculateForces').addEventListener('click', calculateForces);
+}
+
+// Chart update functions
+function updateFreefallChart(timePoints, positionPoints, velocityPoints) {
+    freefallChart.data.labels = timePoints.map(t => t.toFixed(2));
+    freefallChart.data.datasets[0].data = positionPoints;
+    freefallChart.data.datasets[1].data = velocityPoints;
+    freefallChart.update();
+}
+
+function updateSuvatChart(time, u, v, a) {
+    const timePoints = [];
+    const positionPoints = [];
+    const velocityPoints = [];
+    const dt = time / 50;
+
+    for (let t = 0; t <= time; t += dt) {
+        timePoints.push(t.toFixed(2));
+        velocityPoints.push(u + a * t);
+        positionPoints.push(u * t + 0.5 * a * t * t);
+    }
+
+    suvatChart.data.labels = timePoints;
+    suvatChart.data.datasets[0].data = positionPoints;
+    suvatChart.data.datasets[1].data = velocityPoints;
+    suvatChart.update();
+}
+
+function updateProjectileChart(xPoints, yPoints) {
+    projectileChart.data.datasets[0].data = xPoints.map((x, i) => ({
+        x: x,
+        y: yPoints[i]
+    }));
+    projectileChart.update();
+}
+
+function updateForcesDiagram(weight, normal, friction, netForce) {
+    if (forcesChart) {
+        forcesChart.destroy();
+    }
+
+    const forcesCtx = document.getElementById('forcesDiagram').getContext('2d');
+    forcesChart = new Chart(forcesCtx, {
+        type: 'bar',
+        data: {
+            labels: ['Weight', 'Normal', 'Friction', 'Net Force'],
+            datasets: [{
+                label: 'Force (N)',
+                data: [weight, normal, friction, netForce],
+                backgroundColor: [
+                    '#4C51BF',
+                    '#48BB78',
+                    '#ED8936',
+                    '#ECC94B'
+                ]
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                        text: 'Force (N)',
+                        font: {
+                            size: 14,
+                            weight: 'bold'
+                        }
+                    }
+                }
+            }
+        }
+    });
 }
 
 // Physics constants
@@ -311,238 +625,6 @@ function addToPhysicsHistory(type, calculation) {
         historyList.removeChild(historyList.lastChild);
     }
 }
-
-// Update chart configurations for Free Fall
-window.freefallChart = new Chart(ctx, {
-    type: 'line',
-    data: {
-        labels: timePoints.map(t => t.toFixed(2)),
-        datasets: [{
-            label: 'Height (m)',
-            data: positionPoints,
-            borderColor: '#4C51BF',
-            tension: 0.4,
-            fill: false
-        }, {
-            label: 'Velocity (m/s)',
-            data: velocityPoints,
-            borderColor: '#48BB78',
-            tension: 0.4,
-            fill: false
-        }]
-    },
-    options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        interaction: {
-            intersect: false,
-            mode: 'index'
-        },
-        scales: {
-            x: {
-                title: {
-                    display: true,
-                    text: 'Time (s)',
-                    font: {
-                        size: 14,
-                        weight: 'bold'
-                    }
-                },
-                grid: {
-                    color: 'rgba(0, 0, 0, 0.1)'
-                }
-            },
-            y: {
-                title: {
-                    display: true,
-                    text: 'Height (m) / Velocity (m/s)',
-                    font: {
-                        size: 14,
-                        weight: 'bold'
-                    }
-                },
-                grid: {
-                    color: 'rgba(0, 0, 0, 0.1)'
-                }
-            }
-        },
-        plugins: {
-            legend: {
-                position: 'top',
-                labels: {
-                    padding: 20,
-                    font: {
-                        size: 12
-                    }
-                }
-            },
-            tooltip: {
-                backgroundColor: 'rgba(0, 0, 0, 0.8)',
-                padding: 12,
-                titleFont: {
-                    size: 14
-                },
-                bodyFont: {
-                    size: 13
-                }
-            }
-        }
-    }
-});
-
-// Update SUVAT chart configuration
-window.suvatChart = new Chart(ctx, {
-    type: 'line',
-    data: {
-        labels: timePoints,
-        datasets: [{
-            label: 'Position (m)',
-            data: positionPoints,
-            borderColor: '#4C51BF',
-            tension: 0.4,
-            fill: false
-        }, {
-            label: 'Velocity (m/s)',
-            data: velocityPoints,
-            borderColor: '#48BB78',
-            tension: 0.4,
-            fill: false
-        }]
-    },
-    options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        interaction: {
-            intersect: false,
-            mode: 'index'
-        },
-        scales: {
-            x: {
-                title: {
-                    display: true,
-                    text: 'Time (s)',
-                    font: {
-                        size: 14,
-                        weight: 'bold'
-                    }
-                },
-                grid: {
-                    color: 'rgba(0, 0, 0, 0.1)'
-                }
-            },
-            y: {
-                title: {
-                    display: true,
-                    text: 'Position (m) / Velocity (m/s)',
-                    font: {
-                        size: 14,
-                        weight: 'bold'
-                    }
-                },
-                grid: {
-                    color: 'rgba(0, 0, 0, 0.1)'
-                }
-            }
-        },
-        plugins: {
-            legend: {
-                position: 'top',
-                labels: {
-                    padding: 20,
-                    font: {
-                        size: 12
-                    }
-                }
-            },
-            tooltip: {
-                backgroundColor: 'rgba(0, 0, 0, 0.8)',
-                padding: 12,
-                titleFont: {
-                    size: 14
-                },
-                bodyFont: {
-                    size: 13
-                }
-            }
-        }
-    }
-});
-
-// Update Projectile Motion chart configuration
-window.projectileChart = new Chart(ctx, {
-    type: 'scatter',
-    data: {
-        datasets: [{
-            label: 'Trajectory',
-            data: timePoints.map((_, i) => ({
-                x: xPoints[i],
-                y: yPoints[i]
-            })),
-            borderColor: '#4C51BF',
-            backgroundColor: '#4C51BF',
-            showLine: true,
-            tension: 0.4,
-            fill: false
-        }]
-    },
-    options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        interaction: {
-            intersect: false,
-            mode: 'index'
-        },
-        scales: {
-            x: {
-                title: {
-                    display: true,
-                    text: 'Distance (m)',
-                    font: {
-                        size: 14,
-                        weight: 'bold'
-                    }
-                },
-                grid: {
-                    color: 'rgba(0, 0, 0, 0.1)'
-                }
-            },
-            y: {
-                title: {
-                    display: true,
-                    text: 'Height (m)',
-                    font: {
-                        size: 14,
-                        weight: 'bold'
-                    }
-                },
-                grid: {
-                    color: 'rgba(0, 0, 0, 0.1)'
-                }
-            }
-        },
-        plugins: {
-            legend: {
-                position: 'top',
-                labels: {
-                    padding: 20,
-                    font: {
-                        size: 12
-                    }
-                }
-            },
-            tooltip: {
-                backgroundColor: 'rgba(0, 0, 0, 0.8)',
-                padding: 12,
-                titleFont: {
-                    size: 14
-                },
-                bodyFont: {
-                    size: 13
-                }
-            }
-        }
-    }
-});
 
 // Unit data
 const unitData = {
