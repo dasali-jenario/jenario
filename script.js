@@ -11,6 +11,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Initialize tab switching
     initializeTabs();
+
+    // Add event listeners for unit swapping
+    document.getElementById('swapBtn').addEventListener('click', swapUnits);
 });
 
 // Tab switching functionality
@@ -71,7 +74,35 @@ function initializePhysics() {
     const projectileCtx = document.getElementById('projectileChart').getContext('2d');
     const forcesCtx = document.getElementById('forcesDiagram').getContext('2d');
 
-    // Initialize empty charts
+    // Initialize empty charts with configurations
+    initializeCharts(freefallCtx, suvatCtx, projectileCtx, forcesCtx);
+
+    // Physics tab switching
+    const physicsTabs = document.querySelectorAll('.physics-tab');
+    const physicsSections = document.querySelectorAll('.physics-section');
+
+    physicsTabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+            const targetSection = tab.dataset.tab;
+
+            physicsTabs.forEach(t => t.classList.remove('active'));
+            physicsSections.forEach(s => s.classList.add('hidden'));
+
+            tab.classList.add('active');
+            document.getElementById(`${targetSection}Section`).classList.remove('hidden');
+        });
+    });
+
+    // Initialize calculation buttons with event listeners
+    document.getElementById('calculateFreefall').addEventListener('click', calculateFreefall);
+    document.getElementById('calculateSuvat').addEventListener('click', calculateSuvat);
+    document.getElementById('calculateProjectile').addEventListener('click', calculateProjectile);
+    document.getElementById('calculateForces').addEventListener('click', calculateForces);
+}
+
+// Initialize charts function
+function initializeCharts(freefallCtx, suvatCtx, projectileCtx, forcesCtx) {
+    // Initialize Freefall Chart
     freefallChart = new Chart(freefallCtx, {
         type: 'line',
         data: {
@@ -298,27 +329,40 @@ function initializePhysics() {
         }
     });
 
-    // Physics tab switching
-    const physicsTabs = document.querySelectorAll('.physics-tab');
-    const physicsSections = document.querySelectorAll('.physics-section');
-
-    physicsTabs.forEach(tab => {
-        tab.addEventListener('click', () => {
-            const targetSection = tab.dataset.tab;
-
-            physicsTabs.forEach(t => t.classList.remove('active'));
-            physicsSections.forEach(s => s.classList.add('hidden'));
-
-            tab.classList.add('active');
-            document.getElementById(`${targetSection}Section`).classList.remove('hidden');
-        });
+    // Initialize Forces Chart
+    forcesChart = new Chart(forcesCtx, {
+        type: 'bar',
+        data: {
+            labels: ['Weight', 'Normal', 'Friction', 'Net Force'],
+            datasets: [{
+                label: 'Force (N)',
+                data: [0, 0, 0, 0],
+                backgroundColor: [
+                    '#4C51BF',
+                    '#48BB78',
+                    '#ED8936',
+                    '#ECC94B'
+                ]
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                        text: 'Force (N)',
+                        font: {
+                            size: 14,
+                            weight: 'bold'
+                        }
+                    }
+                }
+            }
+        }
     });
-
-    // Initialize calculation buttons
-    document.getElementById('calculateFreefall').addEventListener('click', calculateFreefall);
-    document.getElementById('calculateSuvat').addEventListener('click', calculateSuvat);
-    document.getElementById('calculateProjectile').addEventListener('click', calculateProjectile);
-    document.getElementById('calculateForces').addEventListener('click', calculateForces);
 }
 
 // Chart update functions
@@ -930,4 +974,244 @@ function showTooltip(element, text) {
         tooltip.classList.remove('show');
         setTimeout(() => tooltip.remove(), 200);
     }, 1000);
+}
+
+// Swap units function
+function swapUnits() {
+    const fromUnit = document.getElementById('fromUnit');
+    const toUnit = document.getElementById('toUnit');
+    const fromValue = document.getElementById('fromValue');
+    const toValue = document.getElementById('toValue');
+
+    // Swap unit selections
+    const tempUnit = fromUnit.value;
+    fromUnit.value = toUnit.value;
+    toUnit.value = tempUnit;
+
+    // Swap values
+    const tempValue = fromValue.value;
+    fromValue.value = toValue.value;
+    toValue.value = tempValue;
+
+    // Trigger conversion
+    convert();
+}
+
+// Add to history function
+function addToHistory(fromValue, fromUnit, result, toUnit, category) {
+    const historyList = document.getElementById('historyList');
+    const historyItem = document.createElement('div');
+    historyItem.className = 'history-item';
+    
+    const conversionText = document.createElement('span');
+    conversionText.textContent = `${fromValue} ${fromUnit} = ${result.toFixed(6)} ${toUnit}`;
+    
+    const buttonsDiv = document.createElement('div');
+    buttonsDiv.className = 'history-item-buttons';
+    
+    // Reload button
+    const reloadBtn = document.createElement('button');
+    reloadBtn.innerHTML = '🔄';
+    reloadBtn.className = 'reload-btn';
+    reloadBtn.onclick = () => {
+        document.getElementById('category').value = category;
+        loadUnitsForCategory(category);
+        document.getElementById('fromUnit').value = fromUnit;
+        document.getElementById('toUnit').value = toUnit;
+        document.getElementById('fromValue').value = fromValue;
+        convert();
+    };
+    
+    // Copy button
+    const copyBtn = document.createElement('button');
+    copyBtn.innerHTML = '📋';
+    copyBtn.className = 'copy-btn';
+    copyBtn.onclick = () => {
+        navigator.clipboard.writeText(result.toFixed(6));
+        showTooltip(copyBtn, 'Copied!');
+    };
+    
+    // Delete button
+    const deleteBtn = document.createElement('button');
+    deleteBtn.innerHTML = '🗑️';
+    deleteBtn.className = 'delete-btn';
+    deleteBtn.onclick = () => historyItem.remove();
+    
+    buttonsDiv.appendChild(reloadBtn);
+    buttonsDiv.appendChild(copyBtn);
+    buttonsDiv.appendChild(deleteBtn);
+    historyItem.appendChild(conversionText);
+    historyItem.appendChild(buttonsDiv);
+    
+    historyList.insertBefore(historyItem, historyList.firstChild);
+    
+    // Limit history to 10 items
+    while (historyList.children.length > 10) {
+        historyList.removeChild(historyList.lastChild);
+    }
+}
+
+// Initialize search functionality
+function initializeSearch() {
+    const searchInput = document.getElementById('searchInput');
+    const searchResults = document.getElementById('searchResults');
+    
+    searchInput.addEventListener('input', () => {
+        const query = searchInput.value.toLowerCase();
+        if (query.length < 2) {
+            searchResults.classList.remove('show');
+            return;
+        }
+        
+        const results = [];
+        for (const category in unitData) {
+            for (const unit in unitData[category]) {
+                if (unit.toLowerCase().includes(query)) {
+                    results.push({ category, unit });
+                }
+            }
+        }
+        
+        displaySearchResults(results);
+    });
+}
+
+// Display search results
+function displaySearchResults(results) {
+    const searchResults = document.getElementById('searchResults');
+    searchResults.innerHTML = '';
+    
+    if (results.length === 0) {
+        searchResults.classList.remove('show');
+        return;
+    }
+    
+    results.forEach(result => {
+        const item = document.createElement('div');
+        item.className = 'search-result-item';
+        item.textContent = `${result.unit} (${result.category})`;
+        item.onclick = () => {
+            document.getElementById('category').value = result.category;
+            loadUnitsForCategory(result.category);
+            document.getElementById('fromUnit').value = result.unit;
+            searchResults.classList.remove('show');
+            document.getElementById('searchInput').value = '';
+        };
+        searchResults.appendChild(item);
+    });
+    
+    searchResults.classList.add('show');
+}
+
+// Initialize favorites functionality
+function initializeFavorites() {
+    const favorites = JSON.parse(localStorage.getItem('favorites') || '[]');
+    const favoritesList = document.getElementById('favoritesList');
+    const favoritesSection = document.getElementById('favoritesSection');
+    
+    if (favorites.length > 0) {
+        favoritesSection.classList.add('has-favorites');
+        displayFavorites(favorites);
+    }
+    
+    document.getElementById('favoriteBtn').addEventListener('click', toggleFavorite);
+}
+
+// Display favorites
+function displayFavorites(favorites) {
+    const favoritesList = document.getElementById('favoritesList');
+    favoritesList.innerHTML = '';
+    
+    favorites.forEach(fav => {
+        const item = document.createElement('div');
+        item.className = 'favorite-item';
+        item.textContent = `${fav.category}: ${fav.fromUnit} → ${fav.toUnit}`;
+        item.onclick = () => {
+            document.getElementById('category').value = fav.category;
+            loadUnitsForCategory(fav.category);
+            document.getElementById('fromUnit').value = fav.fromUnit;
+            document.getElementById('toUnit').value = fav.toUnit;
+        };
+        
+        const removeBtn = document.createElement('span');
+        removeBtn.className = 'remove-favorite';
+        removeBtn.textContent = '×';
+        removeBtn.onclick = (e) => {
+            e.stopPropagation();
+            removeFavorite(fav);
+        };
+        
+        item.appendChild(removeBtn);
+        favoritesList.appendChild(item);
+    });
+}
+
+// Toggle favorite
+function toggleFavorite() {
+    const category = document.getElementById('category').value;
+    const fromUnit = document.getElementById('fromUnit').value;
+    const toUnit = document.getElementById('toUnit').value;
+    const favoriteBtn = document.getElementById('favoriteBtn');
+    
+    const favorites = JSON.parse(localStorage.getItem('favorites') || '[]');
+    const existingIndex = favorites.findIndex(f => 
+        f.category === category && 
+        f.fromUnit === fromUnit && 
+        f.toUnit === toUnit
+    );
+    
+    if (existingIndex === -1) {
+        favorites.push({ category, fromUnit, toUnit });
+        favoriteBtn.classList.add('active');
+    } else {
+        favorites.splice(existingIndex, 1);
+        favoriteBtn.classList.remove('active');
+    }
+    
+    localStorage.setItem('favorites', JSON.stringify(favorites));
+    document.getElementById('favoritesSection').classList.toggle('has-favorites', favorites.length > 0);
+    displayFavorites(favorites);
+}
+
+// Remove favorite
+function removeFavorite(favorite) {
+    const favorites = JSON.parse(localStorage.getItem('favorites') || '[]');
+    const newFavorites = favorites.filter(f => 
+        !(f.category === favorite.category && 
+          f.fromUnit === favorite.fromUnit && 
+          f.toUnit === favorite.toUnit)
+    );
+    
+    localStorage.setItem('favorites', JSON.stringify(newFavorites));
+    document.getElementById('favoritesSection').classList.toggle('has-favorites', newFavorites.length > 0);
+    displayFavorites(newFavorites);
+}
+
+// Load theme
+function loadTheme() {
+    const theme = localStorage.getItem('theme') || 'system';
+    document.getElementById('theme').value = theme;
+    applyTheme(theme);
+}
+
+// Apply theme
+function applyTheme(theme) {
+    if (theme === 'system') {
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        document.documentElement.setAttribute('data-theme', prefersDark ? 'dark' : 'light');
+    } else {
+        document.documentElement.setAttribute('data-theme', theme);
+    }
+}
+
+// Load language
+function loadLanguage() {
+    const lang = localStorage.getItem('language') || 'en';
+    document.getElementById('language').value = lang;
+    applyLanguage(lang);
+}
+
+// Apply language
+function applyLanguage(lang) {
+    // Add your language translation logic here
 }
