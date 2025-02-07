@@ -3,8 +3,153 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Universal Unit Converter</title>
+    <title>Unit Converter & Scientific Tools</title>
     <style>
+        :root {
+            /* Light theme variables */
+            --bg-gradient-from: #667eea;
+            --bg-gradient-to: #764ba2;
+            --container-bg: rgba(255, 255, 255, 0.95);
+            --text-primary: #2d3748;
+            --text-secondary: #4a5568;
+            --border-color: #e2e8f0;
+            --input-bg: #ffffff;
+            --accent-color: #667eea;
+            --accent-hover: #5a67d8;
+            --danger-color: #ef4444;
+            --danger-hover: #dc2626;
+            --success-color: #059669;
+            --card-bg: #f7fafc;
+            --tooltip-bg: #1a1a1a;
+            --tooltip-text: #ffffff;
+        }
+
+        [data-theme="dark"] {
+            --bg-gradient-from: #1a202c;
+            --bg-gradient-to: #2d3748;
+            --container-bg: rgba(26, 32, 44, 0.95);
+            --text-primary: #f7fafc;
+            --text-secondary: #e2e8f0;
+            --border-color: #4a5568;
+            --input-bg: #2d3748;
+            --accent-color: #7f9cf5;
+            --accent-hover: #667eea;
+            --danger-color: #f56565;
+            --danger-hover: #e53e3e;
+            --success-color: #38a169;
+            --card-bg: #2d3748;
+            --tooltip-bg: #f7fafc;
+            --tooltip-text: #1a1a1a;
+        }
+
+        /* Add theme selector styles */
+        .theme-selector {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: var(--container-bg);
+            padding: 0.5rem;
+            border-radius: 8px;
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+            font-size: clamp(0.75rem, 2vw, 0.875rem);
+            z-index: 1000;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .theme-selector select {
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            border: 1px solid var(--border-color);
+            background: var(--input-bg);
+            color: var(--text-primary);
+        }
+
+        /* Update existing styles to use CSS variables */
+        body {
+            background: linear-gradient(135deg, var(--bg-gradient-from) 0%, var(--bg-gradient-to) 100%);
+            color: var(--text-primary);
+        }
+
+        .container {
+            background: var(--container-bg);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+        }
+
+        h1, label {
+            color: var(--text-primary);
+        }
+
+        select, input {
+            background: var(--input-bg);
+            border-color: var(--border-color);
+            color: var(--text-primary);
+        }
+
+        select:focus, input:focus {
+            border-color: var(--accent-color);
+        }
+
+        .swap-btn {
+            background: var(--accent-color);
+        }
+
+        .swap-btn:hover {
+            background: var(--accent-hover);
+        }
+
+        #result, .history-list {
+            background: var(--card-bg);
+            color: var(--text-primary);
+        }
+
+        .history-item {
+            border-color: var(--border-color);
+        }
+
+        .history-item .reload-btn {
+            color: var(--accent-color);
+        }
+
+        .history-item .delete-btn {
+            color: var(--danger-color);
+        }
+
+        .history-item .copy-btn {
+            color: var(--success-color);
+        }
+
+        .history-item button:hover {
+            background: var(--card-bg);
+        }
+
+        .clear-history {
+            background: var(--danger-color);
+        }
+
+        .clear-history:hover {
+            background: var(--danger-hover);
+        }
+
+        .copy-tooltip {
+            background: var(--tooltip-bg);
+            color: var(--tooltip-text);
+        }
+
+        @media (max-width: 480px) {
+            .theme-selector {
+                top: 60px;
+                left: 10px;
+                right: 10px;
+                justify-content: center;
+            }
+
+            .container {
+                margin-top: 120px;
+            }
+        }
+
         * {
             margin: 0;
             padding: 0;
@@ -14,7 +159,6 @@
 
         body {
             min-height: 100vh;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             padding: 20px;
             display: flex;
             justify-content: center;
@@ -22,16 +166,13 @@
         }
 
         .container {
-            background: rgba(255, 255, 255, 0.95);
             padding: clamp(1rem, 4vw, 2rem);
             border-radius: 15px;
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
             width: min(100%, 600px);
             margin: 60px auto 20px auto;
         }
 
         h1 {
-            color: #2d3748;
             text-align: center;
             margin-bottom: 1.5rem;
             font-size: clamp(1.5rem, 4vw, 2rem);
@@ -53,22 +194,15 @@
 
         label {
             font-weight: 600;
-            color: #4a5568;
             font-size: clamp(0.875rem, 2vw, 1rem);
         }
 
         select, input {
             width: 100%;
             padding: clamp(0.5rem, 2vw, 0.75rem);
-            border: 2px solid #e2e8f0;
             border-radius: 8px;
             font-size: clamp(0.875rem, 2vw, 1rem);
             transition: border-color 0.2s;
-        }
-
-        select:focus, input:focus {
-            outline: none;
-            border-color: #667eea;
         }
 
         .unit-row {
@@ -91,7 +225,6 @@
         }
 
         .swap-btn {
-            background: #667eea;
             color: white;
             border: none;
             border-radius: 50%;
@@ -105,18 +238,12 @@
             font-size: clamp(1rem, 3vw, 1.2rem);
         }
 
-        .swap-btn:hover {
-            transform: scale(1.1);
-        }
-
         #result {
             margin-top: 1rem;
             padding: 1rem;
-            background: #f7fafc;
             border-radius: 8px;
             text-align: center;
             font-weight: 600;
-            color: #2d3748;
             font-size: clamp(0.875rem, 2vw, 1rem);
             word-wrap: break-word;
         }
@@ -136,7 +263,6 @@
         .history-list {
             max-height: clamp(150px, 40vh, 200px);
             overflow-y: auto;
-            background: #f7fafc;
             border-radius: 8px;
             padding: 0.5rem;
         }
@@ -156,6 +282,14 @@
             word-break: break-all;
             flex: 1;
             min-width: 200px;
+        }
+
+        .history-item span:hover {
+            background: var(--card-bg);
+        }
+
+        .history-item span:active {
+            cursor: grabbing;
         }
 
         .history-item:last-child {
@@ -182,18 +316,6 @@
             position: relative;
         }
 
-        .history-item .reload-btn {
-            color: #667eea;
-        }
-
-        .history-item .delete-btn {
-            color: #ef4444;
-        }
-
-        .history-item .copy-btn {
-            color: #059669;
-        }
-
         .history-item button:hover {
             background: #edf2ff;
         }
@@ -209,8 +331,6 @@
         /* Tooltip styles */
         .copy-tooltip {
             position: absolute;
-            background: #1a1a1a;
-            color: white;
             padding: 4px 8px;
             border-radius: 4px;
             font-size: 12px;
@@ -228,9 +348,7 @@
         }
 
         .clear-history {
-            background: #ef4444;
             color: white;
-            border: none;
             padding: 0.5rem 1rem;
             border-radius: 6px;
             margin-top: 1rem;
@@ -290,9 +408,748 @@
                 background: rgba(255, 255, 255, 0.98);
             }
         }
+
+        .category-info {
+            background: #f8fafc;
+            border-radius: 8px;
+            padding: 0.75rem;
+            margin: 0.5rem 0;
+            font-size: 0.9rem;
+            color: #4a5568;
+            display: none;
+        }
+
+        .category-info.show {
+            display: block;
+        }
+
+        .category-info .refresh-btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
+            transition: background-color 0.2s;
+        }
+
+        .category-info .refresh-btn:hover {
+            background: #5a67d8;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            .category-info {
+                background: #2d3748;
+                color: #e2e8f0;
+            }
+        }
+
+        /* Improved mobile responsiveness for new features */
+        @media (max-width: 480px) {
+            .category-info {
+                font-size: 0.8rem;
+                padding: 0.5rem;
+            }
+        }
+
+        /* Add search and favorites styles */
+        .search-container {
+            position: relative;
+            margin-bottom: 1rem;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 0.75rem 1rem 0.75rem 2.5rem;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 1rem;
+            background: var(--input-bg);
+            color: var(--text-primary);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 0.75rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-secondary);
+            font-size: 1.2rem;
+        }
+
+        .search-results {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: var(--container-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            margin-top: 0.5rem;
+            max-height: 200px;
+            overflow-y: auto;
+            z-index: 1000;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            display: none;
+        }
+
+        .search-results.show {
+            display: block;
+        }
+
+        .search-result-item {
+            padding: 0.75rem 1rem;
+            cursor: pointer;
+            border-bottom: 1px solid var(--border-color);
+            color: var(--text-primary);
+        }
+
+        .search-result-item:last-child {
+            border-bottom: none;
+        }
+
+        .search-result-item:hover {
+            background: var(--card-bg);
+        }
+
+        .favorites-section {
+            margin-bottom: 1.5rem;
+            display: none;
+        }
+
+        .favorites-section.has-favorites {
+            display: block;
+        }
+
+        .favorites-list {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .favorite-item {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .favorite-item:hover {
+            background: var(--accent-color);
+            color: white;
+        }
+
+        .favorite-item .remove-favorite {
+            color: var(--danger-color);
+            cursor: pointer;
+            padding: 0.25rem;
+            border-radius: 4px;
+            margin-left: 0.5rem;
+        }
+
+        .favorite-item .remove-favorite:hover {
+            background: var(--danger-color);
+            color: white;
+        }
+
+        .favorite-btn {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 4px;
+            transition: all 0.2s;
+        }
+
+        .favorite-btn.active {
+            color: #f59e0b;
+        }
+
+        .favorite-btn:hover {
+            background: var(--card-bg);
+        }
+
+        /* Calculator Modal Styles */
+        .calculator-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .calculator-modal.show {
+            display: flex;
+        }
+
+        .calculator {
+            background: var(--container-bg);
+            border-radius: 12px;
+            padding: 20px;
+            width: min(400px, 100%);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+        }
+
+        .calculator-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .calculator-header h2 {
+            margin: 0;
+            color: var(--text-primary);
+        }
+
+        .close-calculator {
+            background: none;
+            border: none;
+            color: var(--text-primary);
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 5px;
+        }
+
+        .calculator-display {
+            background: var(--input-bg);
+            color: var(--text-primary);
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            text-align: right;
+            font-size: 1.5rem;
+            min-height: 60px;
+            word-break: break-all;
+        }
+
+        .calculator-buttons {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 8px;
+        }
+
+        .calc-btn {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+            padding: 12px;
+            border-radius: 6px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .calc-btn:hover {
+            background: var(--accent-color);
+            color: white;
+        }
+
+        .calc-btn.operator {
+            background: var(--accent-color);
+            color: white;
+        }
+
+        .calc-btn.equals {
+            background: var(--success-color);
+            color: white;
+            grid-column: span 2;
+        }
+
+        .calc-btn.clear {
+            background: var(--danger-color);
+            color: white;
+        }
+
+        .calc-btn.function {
+            background: var(--card-bg);
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 480px) {
+            .calculator {
+                padding: 15px;
+            }
+
+            .calculator-buttons {
+                gap: 5px;
+            }
+
+            .calc-btn {
+                padding: 8px;
+                font-size: 0.9rem;
+            }
+        }
+
+        /* Add calculator mode toggle styles */
+        .calculator-mode-toggle {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .mode-switch {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 30px;
+        }
+
+        .mode-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .mode-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            transition: .4s;
+            border-radius: 30px;
+        }
+
+        .mode-slider:before {
+            position: absolute;
+            content: "";
+            height: 22px;
+            width: 22px;
+            left: 4px;
+            bottom: 3px;
+            background-color: var(--accent-color);
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        .mode-switch input:checked + .mode-slider {
+            background-color: var(--card-bg);
+        }
+
+        .mode-switch input:checked + .mode-slider:before {
+            transform: translateX(30px);
+        }
+
+        .mode-label {
+            color: var(--text-primary);
+            font-size: 0.9rem;
+        }
+
+        /* Update calculator buttons for simple mode */
+        .calculator-buttons.simple {
+            grid-template-columns: repeat(4, 1fr);
+        }
+
+        .calculator-buttons.simple .function {
+            display: none;
+        }
+
+        .calculator-buttons.simple .equals {
+            grid-column: span 1;
+        }
+
+        /* Add physics calculator styles */
+        .calculator-mode-toggle {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .physics-calculator {
+            display: none;
+            flex-direction: column;
+            gap: 1rem;
+            max-width: 100%;
+        }
+
+        .physics-calculator.show {
+            display: flex;
+        }
+
+        .physics-input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .physics-input-group label {
+            font-size: 0.9rem;
+            color: var(--text-primary);
+            white-space: normal;
+            line-height: 1.2;
+        }
+
+        .physics-input-group input {
+            background: var(--input-bg);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+            padding: 8px;
+            border-radius: 6px;
+        }
+
+        .physics-select {
+            background: var(--input-bg);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+            padding: 8px;
+            border-radius: 6px;
+            margin-bottom: 1rem;
+        }
+
+        .physics-result {
+            background: var(--card-bg);
+            padding: 1rem;
+            border-radius: 8px;
+            margin-top: 1rem;
+            white-space: pre-wrap;
+            word-break: break-word;
+            font-size: 0.9rem;
+            line-height: 1.4;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .physics-input-row {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .physics-input-row input {
+            flex: 1;
+            min-width: 120px;
+            font-size: 0.9rem;
+        }
+
+        .physics-input-row select {
+            width: auto;
+            min-width: 100px;
+            max-width: 150px;
+            font-size: 0.9rem;
+            padding: 8px;
+            white-space: normal;
+        }
+
+        /* Responsive adjustments for small screens */
+        @media (max-width: 480px) {
+            .physics-input-row {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+
+            .physics-input-row input,
+            .physics-input-row select {
+                width: 100%;
+                max-width: 100%;
+                min-width: unset;
+            }
+
+            .physics-input-group {
+                margin-bottom: 0.5rem;
+            }
+
+            .calculator {
+                max-height: 90vh;
+                overflow-y: auto;
+            }
+
+            .physics-result {
+                font-size: 0.85rem;
+                padding: 0.75rem;
+                max-height: 200px;
+            }
+
+            .calc-btn {
+                padding: 10px 5px;
+                font-size: 0.85rem;
+                height: auto;
+                min-height: 40px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                word-break: break-word;
+            }
+        }
+
+        /* Add better button and text scaling */
+        .calc-btn {
+            font-size: clamp(0.8rem, 2vw, 1rem);
+            padding: clamp(8px, 2vw, 12px);
+            height: auto;
+            min-height: 44px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .calculator-header h2,
+        .physics-calculator h3 {
+            font-size: clamp(1.1rem, 3vw, 1.3rem);
+            line-height: 1.2;
+        }
+
+        .physics-tabs {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+            overflow-x: auto;
+            padding-bottom: 0.5rem;
+        }
+
+        .physics-tab {
+            padding: 0.5rem 1rem;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            background: var(--card-bg);
+            color: var(--text-primary);
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all 0.2s;
+        }
+
+        .physics-tab.active {
+            background: var(--accent-color);
+            color: white;
+            border-color: var(--accent-color);
+        }
+
+        .physics-section {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .physics-section.hidden {
+            display: none;
+        }
+
+        .chart-container {
+            margin-top: 1rem;
+            height: 300px;
+            background: var(--card-bg);
+            border-radius: 8px;
+            padding: 1rem;
+        }
+
+        .force-diagram {
+            margin-top: 1rem;
+            height: 200px;
+            background: var(--card-bg);
+            border-radius: 8px;
+            padding: 1rem;
+        }
+
+        .unit {
+            padding: 8px;
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            color: var(--text-primary);
+            min-width: 60px;
+            text-align: center;
+        }
+
+        @media (max-width: 480px) {
+            .physics-tabs {
+                padding-bottom: 0.5rem;
+            }
+
+            .physics-tab {
+                padding: 0.4rem 0.8rem;
+                font-size: 0.85rem;
+            }
+
+            .chart-container,
+            .force-diagram {
+                height: 250px;
+                padding: 0.5rem;
+            }
+        }
+
+        /* Add these styles to improve responsiveness */
+        @media (max-width: 480px) {
+            .converter-container {
+                padding: 0.5rem;
+            }
+
+            .calc-btn {
+                padding: 8px 12px;
+                font-size: 0.9rem;
+                white-space: nowrap;
+            }
+
+            .unit-row {
+                gap: 0.5rem;
+            }
+
+            .input-group {
+                width: 100%;
+            }
+
+            .input-group input,
+            .input-group select {
+                font-size: 0.9rem;
+                padding: 8px;
+            }
+
+            .calculator {
+                width: 95%;
+                max-height: 90vh;
+                overflow-y: auto;
+            }
+
+            .calculator-buttons {
+                gap: 4px;
+            }
+
+            .calculator-buttons .calc-btn {
+                padding: 10px 5px;
+                font-size: 0.85rem;
+                height: 40px;
+            }
+
+            .calculator-display {
+                font-size: 1.2rem;
+                padding: 10px;
+            }
+        }
+
+        @media (max-width: 360px) {
+            .calc-btn {
+                padding: 6px 10px;
+                font-size: 0.8rem;
+            }
+
+            .calculator-buttons .calc-btn {
+                padding: 8px 4px;
+                font-size: 0.8rem;
+                height: 36px;
+            }
+        }
+
+        /* Add new styles for tabs */
+        .tabs {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 0.5rem;
+        }
+
+        .tab-btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            background: none;
+            color: var(--text-primary);
+            cursor: pointer;
+            font-size: 1rem;
+            border-radius: 8px;
+            transition: all 0.2s;
+        }
+
+        .tab-btn:hover {
+            background: var(--card-bg);
+        }
+
+        .tab-btn.active {
+            background: var(--accent-color);
+            color: white;
+        }
+
+        .tab-content {
+            position: relative;
+        }
+
+        .tab-pane {
+            display: none;
+            animation: fadeIn 0.3s ease-in-out;
+        }
+
+        .tab-pane.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* Update calculator styles */
+        .calculator-container {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        /* Update physics styles */
+        .physics-container {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .physics-sections-container {
+            margin-top: 1.5rem;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 480px) {
+            .tabs {
+                flex-wrap: wrap;
+                gap: 0.25rem;
+            }
+
+            .tab-btn {
+                padding: 0.5rem 1rem;
+                font-size: 0.9rem;
+                flex: 1;
+                min-width: 100px;
+            }
+
+            .calculator-container,
+            .physics-container {
+                padding: 1rem;
+            }
+        }
     </style>
 </head>
 <body>
+    <div class="theme-selector">
+        <label for="theme" data-lang="theme">Theme:</label>
+        <select id="theme">
+            <option value="system" data-lang="theme_system">System</option>
+            <option value="light" data-lang="theme_light">Light</option>
+            <option value="dark" data-lang="theme_dark">Dark</option>
+        </select>
+    </div>
+
     <div class="language-selector">
         <label for="language" data-lang="select_language">Language:</label>
         <select id="language">
@@ -305,50 +1162,343 @@
     </div>
 
     <div class="container">
-        <h1 data-lang="title">Universal Unit Converter</h1>
+        <h1 data-lang="title">Unit Converter & Scientific Tools</h1>
         <div class="converter-container">
-            <div class="input-group">
-                <label for="category" data-lang="category">Measurement Category</label>
-                <select id="category">
-                    <option value="length" data-lang="length">Length</option>
-                    <option value="mass" data-lang="mass">Mass</option>
-                    <option value="temperature" data-lang="temperature">Temperature</option>
-                    <option value="volume" data-lang="volume">Volume</option>
-                    <option value="area" data-lang="area">Area</option>
-                    <option value="speed" data-lang="speed">Speed</option>
-                    <option value="time" data-lang="time">Time</option>
-                </select>
+            <div class="tabs">
+                <button class="tab-btn active" data-tab="converter">🔄 Converter</button>
+                <button class="tab-btn" data-tab="calculator">🔢 Calculator</button>
+                <button class="tab-btn" data-tab="physics">📏 Physics</button>
             </div>
-            
-            <div class="unit-row">
-                <div class="input-group">
-                    <label for="fromValue" data-lang="from">From</label>
-                    <input type="number" id="fromValue" data-lang-placeholder="enter_value" placeholder="Enter value">
-                    <select id="fromUnit"></select>
+
+            <div class="tab-content">
+                <!-- Converter Section -->
+                <div class="tab-pane active" id="converterPane">
+                    <div class="search-container">
+                        <span class="search-icon">🔍</span>
+                        <input type="text" class="search-input" id="searchInput" data-lang-placeholder="search_placeholder" placeholder="Search units or conversions...">
+                        <div class="search-results" id="searchResults"></div>
+                    </div>
+
+                    <div class="favorites-section" id="favoritesSection">
+                        <h2 data-lang="favorites">Favorites</h2>
+                        <div class="favorites-list" id="favoritesList"></div>
+                    </div>
+
+                    <div class="input-group">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <label for="category" data-lang="category">Measurement Category</label>
+                            <button class="favorite-btn" id="favoriteBtn" title="Add to favorites">★</button>
+                        </div>
+                        <select id="category">
+                            <option value="length" data-lang="length">Length</option>
+                            <option value="mass" data-lang="mass">Mass</option>
+                            <option value="temperature" data-lang="temperature">Temperature</option>
+                            <option value="volume" data-lang="volume">Volume</option>
+                            <option value="area" data-lang="area">Area</option>
+                            <option value="speed" data-lang="speed">Speed</option>
+                            <option value="time" data-lang="time">Time</option>
+                            <option value="currency" data-lang="currency">Currency</option>
+                            <option value="scientific" data-lang="scientific">Scientific</option>
+                            <option value="pressure" data-lang="pressure">Pressure</option>
+                            <option value="energy" data-lang="energy">Energy</option>
+                            <option value="power" data-lang="power">Power</option>
+                            <option value="torque" data-lang="torque">Torque</option>
+                            <option value="viscosity" data-lang="viscosity">Viscosity</option>
+                            <option value="force" data-lang="force">Force</option>
+                            <option value="frequency" data-lang="frequency">Frequency</option>
+                            <option value="angle" data-lang="angle">Angle</option>
+                            <option value="density" data-lang="density">Density</option>
+                        </select>
+                    </div>
+
+                    <div class="category-info" id="categoryInfo"></div>
+                    
+                    <div class="unit-row" id="standardConverter">
+                        <div class="input-group">
+                            <label for="fromValue" data-lang="from">From</label>
+                            <input type="number" id="fromValue" data-lang-placeholder="enter_value" placeholder="Enter value">
+                            <select id="fromUnit"></select>
+                        </div>
+                        
+                        <button class="swap-btn" id="swapBtn" title="Swap units">⇄</button>
+                        
+                        <div class="input-group">
+                            <label for="toValue" data-lang="to">To</label>
+                            <input type="number" id="toValue" readonly>
+                            <select id="toUnit"></select>
+                        </div>
+                    </div>
+                    
+                    <div id="result" data-lang="initial_message">
+                        Convert units by entering a value above
+                    </div>
+                    
+                    <div class="history-section">
+                        <h2 data-lang="history">Conversion History</h2>
+                        <div class="history-list" id="historyList"></div>
+                        <button class="clear-history" id="clearHistory" data-lang="clear_history">Clear History</button>
+                    </div>
                 </div>
-                
-                <button class="swap-btn" id="swapBtn" title="Swap units">⇄</button>
-                
-                <div class="input-group">
-                    <label for="toValue" data-lang="to">To</label>
-                    <input type="number" id="toValue" readonly>
-                    <select id="toUnit"></select>
+
+                <!-- Calculator Section -->
+                <div class="tab-pane" id="calculatorPane">
+                    <div class="calculator-container">
+                        <div class="calculator-mode-toggle">
+                            <div>
+                                <span class="mode-label">Simple</span>
+                                <label class="mode-switch">
+                                    <input type="checkbox" id="calculatorMode">
+                                    <span class="mode-slider"></span>
+                                </label>
+                                <span class="mode-label">Scientific</span>
+                            </div>
+                        </div>
+                        <div class="calculator-display" id="calcDisplay">0</div>
+                        <div class="calculator-buttons simple" id="calculatorButtons">
+                            <!-- Scientific Functions Row -->
+                            <button class="calc-btn function">sin</button>
+                            <button class="calc-btn function">cos</button>
+                            <button class="calc-btn function">tan</button>
+                            <button class="calc-btn function">log</button>
+                            <button class="calc-btn function">ln</button>
+                            
+                            <!-- Additional Functions Row -->
+                            <button class="calc-btn function">x²</button>
+                            <button class="calc-btn function">√</button>
+                            <button class="calc-btn function">π</button>
+                            <button class="calc-btn function">e</button>
+                            <button class="calc-btn function">|x|</button>
+
+                            <!-- Numbers and Basic Operators -->
+                            <button class="calc-btn">7</button>
+                            <button class="calc-btn">8</button>
+                            <button class="calc-btn">9</button>
+                            <button class="calc-btn operator">÷</button>
+                            <button class="calc-btn function">x!</button>
+
+                            <button class="calc-btn">4</button>
+                            <button class="calc-btn">5</button>
+                            <button class="calc-btn">6</button>
+                            <button class="calc-btn operator">×</button>
+                            <button class="calc-btn operator">(</button>
+
+                            <button class="calc-btn">1</button>
+                            <button class="calc-btn">2</button>
+                            <button class="calc-btn">3</button>
+                            <button class="calc-btn operator">-</button>
+                            <button class="calc-btn operator">)</button>
+
+                            <button class="calc-btn">0</button>
+                            <button class="calc-btn">.</button>
+                            <button class="calc-btn clear">C</button>
+                            <button class="calc-btn operator">+</button>
+                            <button class="calc-btn equals">=</button>
+                        </div>
+                        <div class="history-section">
+                            <h2>Calculation History</h2>
+                            <div class="history-list" id="calculatorHistory"></div>
+                        </div>
+                    </div>
                 </div>
-            </div>
-            
-            <div id="result" data-lang="initial_message">
-                Convert units by entering a value above
-            </div>
-            
-            <div class="history-section">
-                <h2 data-lang="history">Conversion History</h2>
-                <div class="history-list" id="historyList">
-                    <!-- History items will be added here dynamically -->
+
+                <!-- Physics Section -->
+                <div class="tab-pane" id="physicsPane">
+                    <div class="physics-container">
+                        <div class="physics-tabs">
+                            <button class="physics-tab active" data-tab="freefall">Free Fall</button>
+                            <button class="physics-tab" data-tab="suvat">SUVAT Motion</button>
+                            <button class="physics-tab" data-tab="projectile">Projectile Motion</button>
+                            <button class="physics-tab" data-tab="forces">Forces</button>
+                        </div>
+
+                        <!-- Free Fall Section -->
+                        <div class="physics-section" id="freefallSection">
+                            <h3>Free Fall Calculator</h3>
+                            <div class="physics-input-group">
+                                <label for="objectMass">Object Mass:</label>
+                                <div class="physics-input-row">
+                                    <input type="number" id="objectMass" placeholder="Enter mass">
+                                    <select id="massUnit">
+                                        <option value="kg">Kilograms (kg)</option>
+                                        <option value="g">Grams (g)</option>
+                                        <option value="lb">Pounds (lb)</option>
+                                        <option value="oz">Ounces (oz)</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="physics-input-group">
+                                <label for="objectSize">Object Size (diameter):</label>
+                                <div class="physics-input-row">
+                                    <input type="number" id="objectSize" placeholder="Enter size">
+                                    <select id="sizeUnit">
+                                        <option value="m">Meters (m)</option>
+                                        <option value="cm">Centimeters (cm)</option>
+                                        <option value="ft">Feet (ft)</option>
+                                        <option value="in">Inches (in)</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="physics-input-group">
+                                <label for="fallHeight">Height:</label>
+                                <div class="physics-input-row">
+                                    <input type="number" id="fallHeight" placeholder="Enter height">
+                                    <select id="heightUnit">
+                                        <option value="m">Meters (m)</option>
+                                        <option value="km">Kilometers (km)</option>
+                                        <option value="ft">Feet (ft)</option>
+                                        <option value="mi">Miles (mi)</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <button class="calc-btn" id="calculateFreefall">Calculate Free Fall</button>
+                            <div class="physics-result" id="freefallResult"></div>
+                            <div class="chart-container">
+                                <canvas id="freefallChart"></canvas>
+                            </div>
+                            <div class="history-section">
+                                <h2>Free Fall History</h2>
+                                <div class="history-list" id="freefallHistory"></div>
+                            </div>
+                        </div>
+
+                        <!-- SUVAT Motion Section -->
+                        <div class="physics-section hidden" id="suvatSection">
+                            <h3>SUVAT Motion Calculator</h3>
+                            <div class="physics-input-group">
+                                <label for="suvatS">Displacement (s):</label>
+                                <div class="physics-input-row">
+                                    <input type="number" id="suvatS" placeholder="Enter displacement">
+                                    <select id="suvatSUnit">
+                                        <option value="m">Meters (m)</option>
+                                        <option value="km">Kilometers (km)</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="physics-input-group">
+                                <label for="suvatU">Initial Velocity (u):</label>
+                                <div class="physics-input-row">
+                                    <input type="number" id="suvatU" placeholder="Enter initial velocity">
+                                    <select id="suvatVUnit">
+                                        <option value="ms">m/s</option>
+                                        <option value="kmh">km/h</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="physics-input-group">
+                                <label for="suvatV">Final Velocity (v):</label>
+                                <div class="physics-input-row">
+                                    <input type="number" id="suvatV" placeholder="Enter final velocity">
+                                </div>
+                            </div>
+                            <div class="physics-input-group">
+                                <label for="suvatA">Acceleration (a):</label>
+                                <div class="physics-input-row">
+                                    <input type="number" id="suvatA" placeholder="Enter acceleration">
+                                    <span class="unit">m/s²</span>
+                                </div>
+                            </div>
+                            <div class="physics-input-group">
+                                <label for="suvatT">Time (t):</label>
+                                <div class="physics-input-row">
+                                    <input type="number" id="suvatT" placeholder="Enter time">
+                                    <span class="unit">s</span>
+                                </div>
+                            </div>
+                            <button class="calc-btn" id="calculateSuvat">Calculate Motion</button>
+                            <div class="physics-result" id="suvatResult"></div>
+                            <div class="chart-container">
+                                <canvas id="suvatChart"></canvas>
+                            </div>
+                            <div class="history-section">
+                                <h2>SUVAT History</h2>
+                                <div class="history-list" id="suvatHistory"></div>
+                            </div>
+                        </div>
+
+                        <!-- Projectile Motion Section -->
+                        <div class="physics-section hidden" id="projectileSection">
+                            <h3>Projectile Motion Calculator</h3>
+                            <div class="physics-input-group">
+                                <label for="projVelocity">Initial Velocity:</label>
+                                <div class="physics-input-row">
+                                    <input type="number" id="projVelocity" placeholder="Enter velocity">
+                                    <select id="projVUnit">
+                                        <option value="ms">m/s</option>
+                                        <option value="kmh">km/h</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="physics-input-group">
+                                <label for="projAngle">Launch Angle:</label>
+                                <div class="physics-input-row">
+                                    <input type="number" id="projAngle" placeholder="Enter angle">
+                                    <span class="unit">degrees</span>
+                                </div>
+                            </div>
+                            <div class="physics-input-group">
+                                <label for="projHeight">Initial Height:</label>
+                                <div class="physics-input-row">
+                                    <input type="number" id="projHeight" placeholder="Enter height">
+                                    <select id="projHUnit">
+                                        <option value="m">Meters (m)</option>
+                                        <option value="km">Kilometers (km)</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <button class="calc-btn" id="calculateProjectile">Calculate Trajectory</button>
+                            <div class="physics-result" id="projectileResult"></div>
+                            <div class="chart-container">
+                                <canvas id="projectileChart"></canvas>
+                            </div>
+                            <div class="history-section">
+                                <h2>Projectile History</h2>
+                                <div class="history-list" id="projectileHistory"></div>
+                            </div>
+                        </div>
+
+                        <!-- Forces Section -->
+                        <div class="physics-section hidden" id="forcesSection">
+                            <h3>Forces Calculator</h3>
+                            <div class="physics-input-group">
+                                <label for="forceMass">Mass:</label>
+                                <div class="physics-input-row">
+                                    <input type="number" id="forceMass" placeholder="Enter mass">
+                                    <select id="forceMUnit">
+                                        <option value="kg">Kilograms (kg)</option>
+                                        <option value="g">Grams (g)</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="physics-input-group">
+                                <label for="forceAccel">Acceleration:</label>
+                                <div class="physics-input-row">
+                                    <input type="number" id="forceAccel" placeholder="Enter acceleration">
+                                    <span class="unit">m/s²</span>
+                                </div>
+                            </div>
+                            <div class="physics-input-group">
+                                <label for="forceFriction">Coefficient of Friction:</label>
+                                <div class="physics-input-row">
+                                    <input type="number" id="forceFriction" placeholder="Enter coefficient">
+                                </div>
+                            </div>
+                            <button class="calc-btn" id="calculateForces">Calculate Forces</button>
+                            <div class="physics-result" id="forcesResult"></div>
+                            <div class="force-diagram">
+                                <canvas id="forcesDiagram"></canvas>
+                            </div>
+                            <div class="history-section">
+                                <h2>Forces History</h2>
+                                <div class="history-list" id="forcesHistory"></div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <button class="clear-history" id="clearHistory" data-lang="clear_history">Clear History</button>
             </div>
         </div>
     </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="script.js"></script>
 </body>
 </html>
