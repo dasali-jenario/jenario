@@ -735,7 +735,9 @@ const unitData = {
         bar: 100000,
         psi: 6894.76,
         atmosphere: 101325,
-        mmHg: 133.322
+        mmHg: 133.322,
+        inchHg: 3386.39,
+        torr: 133.322
     },
     energy: {
         joule: 1,
@@ -744,43 +746,58 @@ const unitData = {
         kilocalorie: 4184,
         watthour: 3600,
         kilowatthour: 3600000,
-        electronvolt: 1.602176634e-19
+        electronvolt: 1.602176634e-19,
+        btu: 1055.06,
+        footPound: 1.355818
     },
     power: {
         watt: 1,
         kilowatt: 1000,
         horsepower: 745.7,
-        megawatt: 1000000
+        megawatt: 1000000,
+        milliwatt: 0.001,
+        btuPerHour: 0.29307107
     },
     torque: {
         newtonMeter: 1,
         footPound: 1.355818,
-        inchPound: 0.112985
+        inchPound: 0.112985,
+        kilogramMeter: 9.80665
     },
     force: {
         newton: 1,
         kilonewton: 1000,
         poundForce: 4.44822,
-        dyne: 0.00001
+        dyne: 0.00001,
+        kilogramForce: 9.80665,
+        ounceForce: 0.278014
     },
     frequency: {
         hertz: 1,
         kilohertz: 1000,
         megahertz: 1000000,
-        gigahertz: 1000000000
+        gigahertz: 1000000000,
+        revolutionsPerMinute: 0.0166667,
+        revolutionsPerSecond: 1,
+        cyclesPerSecond: 1
     },
     angle: {
         degree: 1,
         radian: 57.2958,
         gradian: 0.9,
         arcminute: 0.0166667,
-        arcsecond: 0.000277778
+        arcsecond: 0.000277778,
+        turn: 360,
+        quadrant: 90
     },
     density: {
         kilogramPerCubicMeter: 1,
         gramPerCubicCentimeter: 1000,
         poundPerCubicFoot: 16.0185,
-        poundPerCubicInch: 27679.9
+        poundPerCubicInch: 27679.9,
+        kilogramPerLiter: 1000,
+        gramPerMilliliter: 1000,
+        poundPerGallon: 119.826427
     },
     pace: {
         minPerKm: 1,
@@ -789,6 +806,22 @@ const unitData = {
         milesPerHour: 0.0372823,
         secPerKm: 0.0166667,
         secPerMile: 0.0268224
+    },
+    viscosity: {
+        pascalSecond: 1,
+        poise: 0.1,
+        centipoise: 0.001,
+        squareMeterPerSecond: 1,
+        squareFootPerSecond: 0.092903,
+        stokes: 0.0001,
+        centistokes: 0.000001
+    },
+    scientific: {
+        mole: 1,
+        millimole: 0.001,
+        micromole: 0.000001,
+        nanomole: 1e-9,
+        picomole: 1e-12
     }
 };
 
