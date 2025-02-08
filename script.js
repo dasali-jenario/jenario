@@ -14,6 +14,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Add event listeners for unit swapping
     document.getElementById('swapBtn').addEventListener('click', swapUnits);
+
+    // Update placeholder on initial load
+    updatePlaceholder();
 });
 
 // Tab switching functionality
@@ -844,12 +847,21 @@ function initializeConverter() {
     categorySelect.addEventListener('change', () => {
         loadUnitsForCategory(categorySelect.value);
         convert();
+        updatePlaceholder();
     });
 
-    fromUnitSelect.addEventListener('change', convert);
+    // Add event listener for unit changes
+    fromUnitSelect.addEventListener('change', () => {
+        convert();
+        updatePlaceholder();
+    });
+
     toUnitSelect.addEventListener('change', convert);
     fromValueInput.addEventListener('input', convert);
-    swapButton.addEventListener('click', swapUnits);
+    swapButton.addEventListener('click', () => {
+        swapUnits();
+        updatePlaceholder();
+    });
 
     // Initialize search
     initializeSearch();
@@ -1326,4 +1338,120 @@ function loadLanguage() {
 // Apply language
 function applyLanguage(lang) {
     // Add your language translation logic here
+}
+
+// Add this function after the loadUnitsForCategory function
+function updatePlaceholder() {
+    const category = document.getElementById('category').value;
+    const fromUnit = document.getElementById('fromUnit').value;
+    const fromInput = document.getElementById('fromValue');
+    
+    // Example values for different categories
+    const examples = {
+        length: {
+            meter: "e.g., 1.8 (height in meters)",
+            kilometer: "e.g., 5 (distance in km)",
+            centimeter: "e.g., 180 (height in cm)",
+            millimeter: "e.g., 1800 (length in mm)",
+            mile: "e.g., 26.2 (marathon in miles)",
+            yard: "e.g., 100 (field length in yards)",
+            foot: "e.g., 6 (height in feet)",
+            inch: "e.g., 72 (height in inches)"
+        },
+        mass: {
+            kilogram: "e.g., 75 (body weight in kg)",
+            gram: "e.g., 500 (food weight in g)",
+            milligram: "e.g., 500 (medicine dose in mg)",
+            pound: "e.g., 165 (body weight in lbs)",
+            ounce: "e.g., 16 (food weight in oz)"
+        },
+        temperature: {
+            celsius: "e.g., 37 (body temp in °C)",
+            fahrenheit: "e.g., 98.6 (body temp in °F)",
+            kelvin: "e.g., 310.15 (body temp in K)"
+        },
+        volume: {
+            liter: "e.g., 2 (soda bottle in L)",
+            milliliter: "e.g., 500 (water bottle in mL)",
+            cubicMeter: "e.g., 1 (room volume in m³)",
+            gallon: "e.g., 1 (milk jug in gal)",
+            quart: "e.g., 2 (juice in qt)",
+            pint: "e.g., 1 (beer in pt)",
+            cup: "e.g., 2 (flour in cups)"
+        },
+        area: {
+            squareMeter: "e.g., 50 (room area in m²)",
+            squareKilometer: "e.g., 100 (city area in km²)",
+            squareMile: "e.g., 50 (town area in mi²)",
+            squareYard: "e.g., 200 (lawn area in yd²)",
+            squareFoot: "e.g., 500 (house area in ft²)",
+            squareInch: "e.g., 100 (tile area in in²)",
+            hectare: "e.g., 2.5 (farm size in ha)",
+            acre: "e.g., 5 (land size in acres)"
+        },
+        speed: {
+            meterPerSecond: "e.g., 10 (sprint speed in m/s)",
+            kilometerPerHour: "e.g., 60 (car speed in km/h)",
+            milePerHour: "e.g., 55 (speed limit in mph)",
+            knot: "e.g., 20 (boat speed in knots)",
+            footPerSecond: "e.g., 30 (ball speed in ft/s)"
+        },
+        time: {
+            second: "e.g., 10 (sprint time in s)",
+            minute: "e.g., 30 (cooking time in min)",
+            hour: "e.g., 2 (movie length in hr)",
+            day: "e.g., 7 (week length in days)",
+            week: "e.g., 4 (month length in weeks)",
+            month: "e.g., 12 (year length in months)",
+            year: "e.g., 2 (period in years)"
+        },
+        pressure: {
+            pascal: "e.g., 101325 (atm pressure in Pa)",
+            kilopascal: "e.g., 101.325 (atm pressure in kPa)",
+            bar: "e.g., 1.01325 (atm pressure in bar)",
+            psi: "e.g., 32 (tire pressure in psi)",
+            atmosphere: "e.g., 1 (air pressure in atm)",
+            mmHg: "e.g., 760 (blood pressure in mmHg)"
+        },
+        energy: {
+            joule: "e.g., 1000 (energy in J)",
+            kilojoule: "e.g., 2000 (food energy in kJ)",
+            calorie: "e.g., 500 (food energy in cal)",
+            kilocalorie: "e.g., 2000 (daily intake in kcal)",
+            watthour: "e.g., 60 (battery capacity in Wh)",
+            kilowatthour: "e.g., 750 (monthly usage in kWh)"
+        },
+        power: {
+            watt: "e.g., 60 (light bulb in W)",
+            kilowatt: "e.g., 2 (microwave in kW)",
+            horsepower: "e.g., 200 (car engine in hp)",
+            megawatt: "e.g., 1 (power plant in MW)"
+        },
+        frequency: {
+            hertz: "e.g., 440 (musical note in Hz)",
+            kilohertz: "e.g., 44.1 (audio rate in kHz)",
+            megahertz: "e.g., 2400 (WiFi freq in MHz)",
+            gigahertz: "e.g., 3.2 (CPU speed in GHz)"
+        },
+        angle: {
+            degree: "e.g., 90 (right angle in degrees)",
+            radian: "e.g., 1.57 (right angle in rad)",
+            gradian: "e.g., 100 (right angle in grad)",
+            arcminute: "e.g., 60 (1 degree in arcmin)"
+        },
+        density: {
+            kilogramPerCubicMeter: "e.g., 1000 (water density in kg/m³)",
+            gramPerCubicCentimeter: "e.g., 1 (water in g/cm³)",
+            poundPerCubicFoot: "e.g., 62.4 (water in lb/ft³)",
+            kilogramPerLiter: "e.g., 1 (water in kg/L)"
+        }
+    };
+
+    // Get example for current category and unit
+    if (examples[category] && examples[category][fromUnit]) {
+        fromInput.placeholder = examples[category][fromUnit];
+    } else {
+        // Default placeholder if no specific example exists
+        fromInput.placeholder = `Enter a value for ${fromUnit}`;
+    }
 }

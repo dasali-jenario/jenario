@@ -1167,28 +1167,212 @@
                 margin: -0.25rem 0 0.75rem 0;
             }
         }
+
+        /* Update header and navigation styles */
+        .site-header {
+            background: var(--container-bg);
+            padding: 1rem 2rem;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .site-header .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--text-primary);
+            text-decoration: none;
+        }
+
+        .site-nav {
+            display: flex;
+            gap: 1.5rem;
+            align-items: center;
+        }
+
+        .site-nav a {
+            color: var(--text-primary);
+            text-decoration: none;
+            padding: 0.5rem;
+            border-radius: 4px;
+            transition: all 0.2s;
+        }
+
+        .site-nav a:hover {
+            background: var(--card-bg);
+        }
+
+        .nav-controls {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .nav-controls select {
+            padding: 0.5rem;
+            border-radius: 4px;
+            border: 1px solid var(--border-color);
+            background: var(--input-bg);
+            color: var(--text-primary);
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+
+        .menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: var(--text-primary);
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0.5rem;
+        }
+
+        @media (max-width: 768px) {
+            .site-header {
+                padding: 1rem;
+            }
+
+            .menu-toggle {
+                display: block;
+            }
+
+            .site-nav {
+                display: none;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                right: 0;
+                background: var(--container-bg);
+                padding: 1rem;
+                flex-direction: column;
+                gap: 1rem;
+                border-top: 1px solid var(--border-color);
+                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            }
+
+            .site-nav.active {
+                display: flex;
+            }
+
+            .nav-controls {
+                flex-direction: column;
+                width: 100%;
+            }
+
+            .nav-controls select {
+                width: 100%;
+            }
+
+            .site-nav a {
+                width: 100%;
+                text-align: center;
+            }
+        }
+
+        /* Remove old theme and language selector styles */
+        .theme-selector, .language-selector {
+            position: static;
+            background: none;
+            padding: 0;
+            box-shadow: none;
+        }
+
+        /* Add footer styles */
+        .site-footer {
+            background: var(--container-bg);
+            padding: 1rem 2rem;
+            text-align: center;
+            margin-top: 2rem;
+            box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .site-footer p {
+            margin: 0.5rem 0;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .site-footer a {
+            color: var(--accent-color);
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .site-footer a:hover {
+            color: var(--accent-hover);
+        }
+
+        @media (max-width: 480px) {
+            .site-footer {
+                padding: 1rem;
+                font-size: 0.85rem;
+            }
+        }
     </style>
 </head>
 <body>
-    <div class="theme-selector">
-        <label for="theme" data-lang="theme">Theme:</label>
-        <select id="theme">
-            <option value="system" data-lang="theme_system">System</option>
-            <option value="light" data-lang="theme_light">Light</option>
-            <option value="dark" data-lang="theme_dark">Dark</option>
-        </select>
-    </div>
+    <header class="site-header">
+        <div class="header-content">
+            <a href="/" class="logo">Jenario Tools</a>
+            <button class="menu-toggle" id="menuToggle">☰</button>
+            <nav class="site-nav" id="siteNav">
+                <a href="https://raw.githubusercontent.com/dasali-jenario/jenario/refs/heads/main/README.md" target="_blank">Documentation</a>
+                <a href="https://github.com/dasali-jenario/jenario/issues" target="_blank">Feedback</a>
+                <div class="nav-controls">
+                    <select id="theme" aria-label="Theme">
+                        <option value="system">🌓 System Theme</option>
+                        <option value="light">☀️ Light</option>
+                        <option value="dark">🌙 Dark</option>
+                    </select>
+                    <select id="language" aria-label="Language">
+                        <option value="en">🇬🇧 English</option>
+                        <option value="de">🇩🇪 Deutsch</option>
+                        <option value="fr">🇫🇷 Français</option>
+                        <option value="it">🇮🇹 Italiano</option>
+                        <option value="es">🇪🇸 Español</option>
+                    </select>
+                </div>
+            </nav>
+        </div>
+    </header>
 
-    <div class="language-selector">
-        <label for="language" data-lang="select_language">Language:</label>
-        <select id="language">
-            <option value="en">English</option>
-            <option value="de">Deutsch</option>
-            <option value="fr">Français</option>
-            <option value="it">Italiano</option>
-            <option value="es">Español</option>
-        </select>
-    </div>
+    <!-- Add mobile menu JavaScript -->
+    <script>
+        document.getElementById('menuToggle').addEventListener('click', function() {
+            document.getElementById('siteNav').classList.toggle('active');
+            this.textContent = this.textContent === '☰' ? '✕' : '☰';
+        });
+
+        // Close menu when clicking outside
+        document.addEventListener('click', function(event) {
+            const nav = document.getElementById('siteNav');
+            const toggle = document.getElementById('menuToggle');
+            if (!nav.contains(event.target) && !toggle.contains(event.target) && nav.classList.contains('active')) {
+                nav.classList.remove('active');
+                toggle.textContent = '☰';
+            }
+        });
+
+        // Close menu when window is resized above mobile breakpoint
+        window.addEventListener('resize', function() {
+            if (window.innerWidth > 768) {
+                document.getElementById('siteNav').classList.remove('active');
+                document.getElementById('menuToggle').textContent = '☰';
+            }
+        });
+    </script>
 
     <div class="container">
         <h1 data-lang="title">Unit Converter & Scientific Tools</h1>
@@ -1245,16 +1429,34 @@
                     <div class="unit-row" id="standardConverter">
                         <div class="input-group">
                             <label for="fromValue" data-lang="from">From</label>
-                            <input type="number" id="fromValue" data-lang-placeholder="enter_value" placeholder="Enter value">
-                            <select id="fromUnit"></select>
+                            <div class="input-with-unit">
+                                <input type="number" id="fromValue" placeholder="Enter a value (e.g., 100)">
+                                <select id="fromUnit">
+                                    <option value="m">Meters (m)</option>
+                                    <option value="cm">Centimeters (cm)</option>
+                                    <option value="ft">Feet (ft)</option>
+                                    <option value="in">Inches (in)</option>
+                                    <option value="km">Kilometers (km)</option>
+                                    <option value="mi">Miles (mi)</option>
+                                </select>
+                            </div>
                         </div>
                         
                         <button class="swap-btn" id="swapBtn" title="Swap units">⇄</button>
                         
                         <div class="input-group">
                             <label for="toValue" data-lang="to">To</label>
-                            <input type="number" id="toValue" readonly>
-                            <select id="toUnit"></select>
+                            <div class="input-with-unit">
+                                <input type="number" id="toValue" readonly placeholder="Converted value will appear here">
+                                <select id="toUnit">
+                                    <option value="m">Meters (m)</option>
+                                    <option value="cm">Centimeters (cm)</option>
+                                    <option value="ft">Feet (ft)</option>
+                                    <option value="in">Inches (in)</option>
+                                    <option value="km">Kilometers (km)</option>
+                                    <option value="mi">Miles (mi)</option>
+                                </select>
+                            </div>
                         </div>
                     </div>
                     
@@ -1347,7 +1549,7 @@
                             <div class="physics-input-group">
                                 <label for="objectMass">Object Mass:</label>
                                 <div class="physics-input-row">
-                                    <input type="number" id="objectMass" placeholder="Enter mass">
+                                    <input type="number" id="objectMass" placeholder="e.g., 1.5 for 1.5 kg">
                                     <select id="massUnit">
                                         <option value="kg">Kilograms (kg)</option>
                                         <option value="g">Grams (g)</option>
@@ -1359,7 +1561,7 @@
                             <div class="physics-input-group">
                                 <label for="objectSize">Object Size (diameter):</label>
                                 <div class="physics-input-row">
-                                    <input type="number" id="objectSize" placeholder="Enter size">
+                                    <input type="number" id="objectSize" placeholder="e.g., 0.5 for 0.5 m">
                                     <select id="sizeUnit">
                                         <option value="m">Meters (m)</option>
                                         <option value="cm">Centimeters (cm)</option>
@@ -1371,7 +1573,7 @@
                             <div class="physics-input-group">
                                 <label for="fallHeight">Height:</label>
                                 <div class="physics-input-row">
-                                    <input type="number" id="fallHeight" placeholder="Enter height">
+                                    <input type="number" id="fallHeight" placeholder="e.g., 100 for 100 m">
                                     <select id="heightUnit">
                                         <option value="m">Meters (m)</option>
                                         <option value="km">Kilometers (km)</option>
@@ -1398,7 +1600,7 @@
                             <div class="physics-input-group">
                                 <label for="suvatS">Displacement (s):</label>
                                 <div class="physics-input-row">
-                                    <input type="number" id="suvatS" placeholder="Enter displacement">
+                                    <input type="number" id="suvatS" placeholder="e.g., 50 for 50 m">
                                     <select id="suvatSUnit">
                                         <option value="m">Meters (m)</option>
                                         <option value="km">Kilometers (km)</option>
@@ -1408,7 +1610,7 @@
                             <div class="physics-input-group">
                                 <label for="suvatU">Initial Velocity (u):</label>
                                 <div class="physics-input-row">
-                                    <input type="number" id="suvatU" placeholder="Enter initial velocity">
+                                    <input type="number" id="suvatU" placeholder="e.g., 10 for 10 m/s">
                                     <select id="suvatVUnit">
                                         <option value="ms">m/s</option>
                                         <option value="kmh">km/h</option>
@@ -1418,20 +1620,20 @@
                             <div class="physics-input-group">
                                 <label for="suvatV">Final Velocity (v):</label>
                                 <div class="physics-input-row">
-                                    <input type="number" id="suvatV" placeholder="Enter final velocity">
+                                    <input type="number" id="suvatV" placeholder="e.g., 20 for 20 m/s">
                                 </div>
                             </div>
                             <div class="physics-input-group">
                                 <label for="suvatA">Acceleration (a):</label>
                                 <div class="physics-input-row">
-                                    <input type="number" id="suvatA" placeholder="Enter acceleration">
+                                    <input type="number" id="suvatA" placeholder="e.g., 9.81 for 9.81 m/s²">
                                     <span class="unit">m/s²</span>
                                 </div>
                             </div>
                             <div class="physics-input-group">
                                 <label for="suvatT">Time (t):</label>
                                 <div class="physics-input-row">
-                                    <input type="number" id="suvatT" placeholder="Enter time">
+                                    <input type="number" id="suvatT" placeholder="e.g., 5 for 5 seconds">
                                     <span class="unit">s</span>
                                 </div>
                             </div>
@@ -1453,7 +1655,7 @@
                             <div class="physics-input-group">
                                 <label for="projVelocity">Initial Velocity:</label>
                                 <div class="physics-input-row">
-                                    <input type="number" id="projVelocity" placeholder="Enter velocity">
+                                    <input type="number" id="projVelocity" placeholder="e.g., 15 for 15 m/s">
                                     <select id="projVUnit">
                                         <option value="ms">m/s</option>
                                         <option value="kmh">km/h</option>
@@ -1463,14 +1665,14 @@
                             <div class="physics-input-group">
                                 <label for="projAngle">Launch Angle:</label>
                                 <div class="physics-input-row">
-                                    <input type="number" id="projAngle" placeholder="Enter angle">
+                                    <input type="number" id="projAngle" placeholder="e.g., 45 for 45 degrees">
                                     <span class="unit">degrees</span>
                                 </div>
                             </div>
                             <div class="physics-input-group">
                                 <label for="projHeight">Initial Height:</label>
                                 <div class="physics-input-row">
-                                    <input type="number" id="projHeight" placeholder="Enter height">
+                                    <input type="number" id="projHeight" placeholder="e.g., 2 for 2 m">
                                     <select id="projHUnit">
                                         <option value="m">Meters (m)</option>
                                         <option value="km">Kilometers (km)</option>
@@ -1495,7 +1697,7 @@
                             <div class="physics-input-group">
                                 <label for="forceMass">Mass:</label>
                                 <div class="physics-input-row">
-                                    <input type="number" id="forceMass" placeholder="Enter mass">
+                                    <input type="number" id="forceMass" placeholder="e.g., 5 for 5 kg">
                                     <select id="forceMUnit">
                                         <option value="kg">Kilograms (kg)</option>
                                         <option value="g">Grams (g)</option>
@@ -1505,14 +1707,14 @@
                             <div class="physics-input-group">
                                 <label for="forceAccel">Acceleration:</label>
                                 <div class="physics-input-row">
-                                    <input type="number" id="forceAccel" placeholder="Enter acceleration">
+                                    <input type="number" id="forceAccel" placeholder="e.g., 2 for 2 m/s²">
                                     <span class="unit">m/s²</span>
                                 </div>
                             </div>
                             <div class="physics-input-group">
                                 <label for="forceFriction">Coefficient of Friction:</label>
                                 <div class="physics-input-row">
-                                    <input type="number" id="forceFriction" placeholder="Enter coefficient">
+                                    <input type="number" id="forceFriction" placeholder="e.g., 0.3 for 30% friction">
                                 </div>
                             </div>
                             <button class="calc-btn" id="calculateForces">Calculate Forces</button>
@@ -1530,6 +1732,14 @@
             </div>
         </div>
     </div>
+
+    <footer class="site-footer">
+        <p>© 2024 <a href="https://jenario.com" target="_blank">Jenario</a>. All rights reserved.</p>
+        <p>
+            <a href="https://raw.githubusercontent.com/dasali-jenario/jenario/refs/heads/main/README.md" target="_blank">Documentation</a> |
+            <a href="https://github.com/dasali-jenario/jenario/issues" target="_blank">Report Issues</a>
+        </p>
+    </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="script.js"></script>
