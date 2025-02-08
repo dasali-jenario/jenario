@@ -18,46 +18,46 @@ document.addEventListener('DOMContentLoaded', function() {
     // Update placeholder on initial load
     updatePlaceholder();
 
-    // Add theme switcher event listener
+    // Initialize theme switcher
     const themeSelect = document.getElementById('theme');
     if (themeSelect) {
+        // Load saved theme
+        const savedTheme = localStorage.getItem('theme') || 'system';
+        themeSelect.value = savedTheme;
+        applyTheme(savedTheme);
+
+        // Add event listener
         themeSelect.addEventListener('change', function() {
             const theme = this.value;
             applyTheme(theme);
             localStorage.setItem('theme', theme);
         });
+
+        // Add listener for system theme changes
+        if (window.matchMedia) {
+            window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+                if (themeSelect.value === 'system') {
+                    applyTheme('system');
+                }
+            });
+        }
     }
 
-    // Add language switcher event listener
+    // Initialize language switcher
     const languageSelect = document.getElementById('language');
     if (languageSelect) {
+        // Load saved language
+        const savedLanguage = localStorage.getItem('language') || 'en';
+        languageSelect.value = savedLanguage;
+        applyLanguage(savedLanguage);
+
+        // Add event listener
         languageSelect.addEventListener('change', function() {
             const lang = this.value;
             applyLanguage(lang);
             localStorage.setItem('language', lang);
-        });
-    }
-
-    // Load saved theme and language
-    const savedTheme = localStorage.getItem('theme') || 'system';
-    const savedLanguage = localStorage.getItem('language') || 'en';
-    
-    if (themeSelect) {
-        themeSelect.value = savedTheme;
-        applyTheme(savedTheme);
-    }
-    
-    if (languageSelect) {
-        languageSelect.value = savedLanguage;
-        applyLanguage(savedLanguage);
-    }
-
-    // Add listener for system theme changes
-    if (window.matchMedia) {
-        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
-            if (themeSelect && themeSelect.value === 'system') {
-                applyTheme('system');
-            }
+            // Update placeholders after language change
+            updatePlaceholder();
         });
     }
 });
@@ -911,12 +911,6 @@ function initializeConverter() {
 
     // Initialize favorites
     initializeFavorites();
-
-    // Load saved theme
-    loadTheme();
-
-    // Load saved language
-    loadLanguage();
 }
 
 // Load units for a category
@@ -1354,13 +1348,6 @@ function removeFavorite(favorite) {
     displayFavorites(newFavorites);
 }
 
-// Load theme
-function loadTheme() {
-    const theme = localStorage.getItem('theme') || 'system';
-    document.getElementById('theme').value = theme;
-    applyTheme(theme);
-}
-
 // Apply theme
 function applyTheme(theme) {
     if (theme === 'system') {
@@ -1369,13 +1356,6 @@ function applyTheme(theme) {
     } else {
         document.documentElement.setAttribute('data-theme', theme);
     }
-}
-
-// Load language
-function loadLanguage() {
-    const lang = localStorage.getItem('language') || 'en';
-    document.getElementById('language').value = lang;
-    applyLanguage(lang);
 }
 
 // Apply language
@@ -1615,13 +1595,13 @@ function applyLanguage(lang) {
     // Update calculator mode labels
     const simpleModeLabel = document.querySelector('.mode-label:first-child');
     const scientificModeLabel = document.querySelector('.mode-label:last-child');
-    if (simpleModeLabel && scientificModeLabel) {
+    if (simpleModeLabel && scientificModeLabel && translations[lang]) {
         simpleModeLabel.textContent = translations[lang].simple_mode;
         scientificModeLabel.textContent = translations[lang].scientific_mode;
     }
 
     // Update physics calculator error messages
-    if (document.getElementById('freefallResult')) {
+    if (document.getElementById('freefallResult') && translations[lang]) {
         document.getElementById('freefallResult').textContent = translations[lang].error_fill_fields;
     }
 
