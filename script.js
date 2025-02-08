@@ -1374,6 +1374,34 @@ function applyLanguage(lang) {
             clear_history: 'Clear History',
             favorites: 'Favorites',
             search_placeholder: 'Search units or conversions...',
+            documentation: 'Documentation',
+            feedback: 'Feedback',
+            system_theme: 'System Theme',
+            light: 'Light',
+            dark: 'Dark',
+            converter_tab: 'Converter',
+            calculator_tab: 'Calculator',
+            physics_tab: 'Physics',
+            simple_mode: 'Simple',
+            scientific_mode: 'Scientific',
+            calculation_history: 'Calculation History',
+            // Physics tabs
+            freefall_tab: 'Free Fall',
+            suvat_tab: 'SUVAT Motion',
+            projectile_tab: 'Projectile Motion',
+            forces_tab: 'Forces',
+            // Physics labels
+            object_mass: 'Object Mass:',
+            object_size: 'Object Size (diameter):',
+            height: 'Height:',
+            initial_velocity: 'Initial Velocity:',
+            launch_angle: 'Launch Angle:',
+            initial_height: 'Initial Height:',
+            displacement: 'Displacement (s):',
+            acceleration: 'Acceleration:',
+            friction: 'Coefficient of Friction:',
+            calculate_button: 'Calculate',
+            // Units
             length: 'Length',
             mass: 'Mass',
             temperature: 'Temperature',
@@ -1391,7 +1419,15 @@ function applyLanguage(lang) {
             force: 'Force',
             frequency: 'Frequency',
             angle: 'Angle',
-            density: 'Density'
+            density: 'Density',
+            // Footer
+            report_issues: 'Report Issues',
+            // Results
+            results: 'Results',
+            error_fill_fields: 'Please fill in all fields with valid numbers.',
+            error_provide_mass: 'Please provide the mass.',
+            error_velocity_angle: 'Please provide initial velocity and angle.',
+            error_three_values: 'Please provide at least 3 values.'
         },
         de: {
             title: 'Einheitenumrechner & Wissenschaftliche Tools',
@@ -1403,6 +1439,34 @@ function applyLanguage(lang) {
             clear_history: 'Verlauf löschen',
             favorites: 'Favoriten',
             search_placeholder: 'Einheiten oder Umrechnungen suchen...',
+            documentation: 'Dokumentation',
+            feedback: 'Feedback',
+            system_theme: 'System-Design',
+            light: 'Hell',
+            dark: 'Dunkel',
+            converter_tab: 'Umrechner',
+            calculator_tab: 'Rechner',
+            physics_tab: 'Physik',
+            simple_mode: 'Einfach',
+            scientific_mode: 'Wissenschaftlich',
+            calculation_history: 'Berechnungsverlauf',
+            // Physics tabs
+            freefall_tab: 'Freier Fall',
+            suvat_tab: 'SUVAT-Bewegung',
+            projectile_tab: 'Wurfbewegung',
+            forces_tab: 'Kräfte',
+            // Physics labels
+            object_mass: 'Objektmasse:',
+            object_size: 'Objektgröße (Durchmesser):',
+            height: 'Höhe:',
+            initial_velocity: 'Anfangsgeschwindigkeit:',
+            launch_angle: 'Abschusswinkel:',
+            initial_height: 'Anfangshöhe:',
+            displacement: 'Verschiebung (s):',
+            acceleration: 'Beschleunigung:',
+            friction: 'Reibungskoeffizient:',
+            calculate_button: 'Berechnen',
+            // Units
             length: 'Länge',
             mass: 'Masse',
             temperature: 'Temperatur',
@@ -1420,7 +1484,15 @@ function applyLanguage(lang) {
             force: 'Kraft',
             frequency: 'Frequenz',
             angle: 'Winkel',
-            density: 'Dichte'
+            density: 'Dichte',
+            // Footer
+            report_issues: 'Probleme melden',
+            // Results
+            results: 'Ergebnisse',
+            error_fill_fields: 'Bitte füllen Sie alle Felder mit gültigen Zahlen aus.',
+            error_provide_mass: 'Bitte geben Sie die Masse an.',
+            error_velocity_angle: 'Bitte geben Sie Anfangsgeschwindigkeit und Winkel an.',
+            error_three_values: 'Bitte geben Sie mindestens 3 Werte an.'
         },
         fr: {
             title: 'Convertisseur d\'unités & Outils scientifiques',
@@ -1432,6 +1504,34 @@ function applyLanguage(lang) {
             clear_history: 'Effacer l\'historique',
             favorites: 'Favoris',
             search_placeholder: 'Rechercher des unités ou des conversions...',
+            documentation: 'Documentation',
+            feedback: 'Retour d\'information',
+            system_theme: 'Thème système',
+            light: 'Clair',
+            dark: 'Sombre',
+            converter_tab: 'Convertisseur',
+            calculator_tab: 'Calculatrice',
+            physics_tab: 'Physique',
+            simple_mode: 'Simple',
+            scientific_mode: 'Scientifique',
+            calculation_history: 'Historique des calculs',
+            // Physics tabs
+            freefall_tab: 'Chute libre',
+            suvat_tab: 'Mouvement SUVAT',
+            projectile_tab: 'Mouvement projectile',
+            forces_tab: 'Forces',
+            // Physics labels
+            object_mass: 'Masse de l\'objet:',
+            object_size: 'Taille de l\'objet (diamètre):',
+            height: 'Hauteur:',
+            initial_velocity: 'Vitesse initiale:',
+            launch_angle: 'Angle de lancement:',
+            initial_height: 'Hauteur initiale:',
+            displacement: 'Déplacement (s):',
+            acceleration: 'Accélération:',
+            friction: 'Coefficient de frottement:',
+            calculate_button: 'Calculer',
+            // Units
             length: 'Longueur',
             mass: 'Masse',
             temperature: 'Température',
@@ -1449,12 +1549,19 @@ function applyLanguage(lang) {
             force: 'Force',
             frequency: 'Fréquence',
             angle: 'Angle',
-            density: 'Densité'
-        },
-        // Add more languages as needed
+            density: 'Densité',
+            // Footer
+            report_issues: 'Signaler des problèmes',
+            // Results
+            results: 'Résultats',
+            error_fill_fields: 'Veuillez remplir tous les champs avec des nombres valides.',
+            error_provide_mass: 'Veuillez fournir la masse.',
+            error_velocity_angle: 'Veuillez fournir la vitesse initiale et l\'angle.',
+            error_three_values: 'Veuillez fournir au moins 3 valeurs.'
+        }
     };
 
-    // Apply translations
+    // Apply translations to all elements with data-lang attribute
     const elements = document.querySelectorAll('[data-lang]');
     elements.forEach(element => {
         const key = element.getAttribute('data-lang');
@@ -1467,14 +1574,35 @@ function applyLanguage(lang) {
         }
     });
 
-    // Update placeholders
-    const elements2 = document.querySelectorAll('[data-lang-placeholder]');
-    elements2.forEach(element => {
+    // Update placeholders for elements with data-lang-placeholder
+    const placeholderElements = document.querySelectorAll('[data-lang-placeholder]');
+    placeholderElements.forEach(element => {
         const key = element.getAttribute('data-lang-placeholder');
         if (translations[lang] && translations[lang][key]) {
             element.placeholder = translations[lang][key];
         }
     });
+
+    // Update theme selector options
+    const themeSelect = document.getElementById('theme');
+    if (themeSelect) {
+        themeSelect.options[0].text = `🌓 ${translations[lang].system_theme}`;
+        themeSelect.options[1].text = `☀️ ${translations[lang].light}`;
+        themeSelect.options[2].text = `🌙 ${translations[lang].dark}`;
+    }
+
+    // Update calculator mode labels
+    const simpleModeLabel = document.querySelector('.mode-label:first-child');
+    const scientificModeLabel = document.querySelector('.mode-label:last-child');
+    if (simpleModeLabel && scientificModeLabel) {
+        simpleModeLabel.textContent = translations[lang].simple_mode;
+        scientificModeLabel.textContent = translations[lang].scientific_mode;
+    }
+
+    // Update physics calculator error messages
+    if (document.getElementById('freefallResult')) {
+        document.getElementById('freefallResult').textContent = translations[lang].error_fill_fields;
+    }
 
     // Update document language
     document.documentElement.lang = lang;
