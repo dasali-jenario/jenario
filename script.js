@@ -703,6 +703,84 @@ const unitData = {
         pint: 0.473176,
         cup: 0.236588
     },
+    area: {
+        squareMeter: 1,
+        squareKilometer: 1000000,
+        squareMile: 2589988.11,
+        squareYard: 0.836127,
+        squareFoot: 0.092903,
+        squareInch: 0.00064516,
+        hectare: 10000,
+        acre: 4046.86
+    },
+    speed: {
+        meterPerSecond: 1,
+        kilometerPerHour: 0.277778,
+        milePerHour: 0.44704,
+        knot: 0.514444,
+        footPerSecond: 0.3048
+    },
+    time: {
+        second: 1,
+        minute: 60,
+        hour: 3600,
+        day: 86400,
+        week: 604800,
+        month: 2592000,
+        year: 31536000
+    },
+    pressure: {
+        pascal: 1,
+        kilopascal: 1000,
+        bar: 100000,
+        psi: 6894.76,
+        atmosphere: 101325
+    },
+    energy: {
+        joule: 1,
+        kilojoule: 1000,
+        calorie: 4.184,
+        kilocalorie: 4184,
+        watthour: 3600,
+        kilowatthour: 3600000,
+        electronvolt: 1.602176634e-19
+    },
+    power: {
+        watt: 1,
+        kilowatt: 1000,
+        horsepower: 745.7,
+        megawatt: 1000000
+    },
+    torque: {
+        newtonMeter: 1,
+        footPound: 1.355818,
+        inchPound: 0.112985
+    },
+    force: {
+        newton: 1,
+        kilonewton: 1000,
+        poundForce: 4.44822,
+        dyne: 0.00001
+    },
+    frequency: {
+        hertz: 1,
+        kilohertz: 1000,
+        megahertz: 1000000,
+        gigahertz: 1000000000
+    },
+    angle: {
+        degree: 1,
+        radian: 57.2958,
+        gradian: 0.9,
+        arcminute: 0.0166667,
+        arcsecond: 0.000277778
+    },
+    density: {
+        kilogramPerCubicMeter: 1,
+        gramPerCubicCentimeter: 1000,
+        poundPerCubicFoot: 16.0185,
+        poundPerCubicInch: 27679.9
+    },
     pace: {
         minPerKm: 1,
         minPerMile: 1.60934,
