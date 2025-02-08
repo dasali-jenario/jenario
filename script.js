@@ -822,7 +822,24 @@ const unitData = {
         micromole: 0.000001,
         nanomole: 1e-9,
         picomole: 1e-12
-    }
+    },
+    currency: {
+        USD: 1,
+        EUR: 1.08,
+        GBP: 1.26,
+        JPY: 0.0067,
+        AUD: 0.65,
+        CAD: 0.74,
+        CHF: 1.13,
+        CNY: 0.14,
+        INR: 0.012,
+        NZD: 0.61,
+        BRL: 0.20,
+        MXN: 0.059,
+        SGD: 0.74,
+        HKD: 0.13,
+        SEK: 0.096
+    },
 };
 
 // Initialize converter functionality
@@ -862,6 +879,28 @@ function initializeConverter() {
 
     // Load saved language
     loadLanguage();
+
+    // Load saved exchange rates or fetch new ones
+    const savedRates = localStorage.getItem('exchangeRates');
+    if (savedRates) {
+        const { rates, timestamp } = JSON.parse(savedRates);
+        const oneHour = 60 * 60 * 1000; // milliseconds
+        
+        if (Date.now() - timestamp > oneHour) {
+            // Rates are older than 1 hour, update them
+            updateExchangeRates();
+        } else {
+            // Use saved rates
+            for (const currency in rates) {
+                if (unitData.currency[currency]) {
+                    unitData.currency[currency] = rates[currency];
+                }
+            }
+        }
+    } else {
+        // No saved rates, fetch new ones
+        updateExchangeRates();
+    }
 }
 
 // Load units for a category
@@ -907,6 +946,10 @@ function convert() {
     let result;
     if (category === 'temperature') {
         result = convertTemperature(fromValue, fromUnit, toUnit);
+    } else if (category === 'currency') {
+        const fromFactor = unitData.currency[fromUnit];
+        const toFactor = unitData.currency[toUnit];
+        result = fromValue * (1 / fromFactor) * toFactor;
     } else {
         const fromFactor = unitData[category][fromUnit];
         const toFactor = unitData[category][toUnit];
@@ -1326,4 +1369,27 @@ function loadLanguage() {
 // Apply language
 function applyLanguage(lang) {
     // Add your language translation logic here
+}
+
+// Add after the convert function
+async function updateExchangeRates() {
+    try {
+        const response = await fetch('https://api.exchangerate-api.com/v4/latest/USD');
+        const data = await response.json();
+        
+        // Update currency conversion factors
+        for (const currency in data.rates) {
+            if (unitData.currency[currency]) {
+                unitData.currency[currency] = data.rates[currency];
+            }
+        }
+        
+        // Store the rates and timestamp in localStorage
+        localStorage.setItem('exchangeRates', JSON.stringify({
+            rates: data.rates,
+            timestamp: Date.now()
+        }));
+    } catch (error) {
+        console.error('Error updating exchange rates:', error);
+    }
 }
