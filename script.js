@@ -19,22 +19,47 @@ document.addEventListener('DOMContentLoaded', function() {
     updatePlaceholder();
 
     // Add theme switcher event listener
-    document.getElementById('theme').addEventListener('change', function() {
-        const theme = this.value;
-        applyTheme(theme);
-        localStorage.setItem('theme', theme);
-    });
+    const themeSelect = document.getElementById('theme');
+    if (themeSelect) {
+        themeSelect.addEventListener('change', function() {
+            const theme = this.value;
+            applyTheme(theme);
+            localStorage.setItem('theme', theme);
+        });
+    }
 
     // Add language switcher event listener
-    document.getElementById('language').addEventListener('change', function() {
-        const lang = this.value;
-        applyLanguage(lang);
-        localStorage.setItem('language', lang);
-    });
+    const languageSelect = document.getElementById('language');
+    if (languageSelect) {
+        languageSelect.addEventListener('change', function() {
+            const lang = this.value;
+            applyLanguage(lang);
+            localStorage.setItem('language', lang);
+        });
+    }
 
     // Load saved theme and language
-    loadTheme();
-    loadLanguage();
+    const savedTheme = localStorage.getItem('theme') || 'system';
+    const savedLanguage = localStorage.getItem('language') || 'en';
+    
+    if (themeSelect) {
+        themeSelect.value = savedTheme;
+        applyTheme(savedTheme);
+    }
+    
+    if (languageSelect) {
+        languageSelect.value = savedLanguage;
+        applyLanguage(savedLanguage);
+    }
+
+    // Add listener for system theme changes
+    if (window.matchMedia) {
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+            if (themeSelect && themeSelect.value === 'system') {
+                applyTheme('system');
+            }
+        });
+    }
 });
 
 // Tab switching functionality
@@ -1341,13 +1366,6 @@ function applyTheme(theme) {
     if (theme === 'system') {
         const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
         document.documentElement.setAttribute('data-theme', prefersDark ? 'dark' : 'light');
-        
-        // Add listener for system theme changes
-        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
-            if (document.getElementById('theme').value === 'system') {
-                document.documentElement.setAttribute('data-theme', e.matches ? 'dark' : 'light');
-            }
-        });
     } else {
         document.documentElement.setAttribute('data-theme', theme);
     }
@@ -1566,7 +1584,7 @@ function applyLanguage(lang) {
     elements.forEach(element => {
         const key = element.getAttribute('data-lang');
         if (translations[lang] && translations[lang][key]) {
-            if (element.tagName === 'INPUT') {
+            if (element.tagName === 'INPUT' && element.hasAttribute('placeholder')) {
                 element.placeholder = translations[lang][key];
             } else {
                 element.textContent = translations[lang][key];
@@ -1586,9 +1604,12 @@ function applyLanguage(lang) {
     // Update theme selector options
     const themeSelect = document.getElementById('theme');
     if (themeSelect) {
-        themeSelect.options[0].text = `🌓 ${translations[lang].system_theme}`;
-        themeSelect.options[1].text = `☀️ ${translations[lang].light}`;
-        themeSelect.options[2].text = `🌙 ${translations[lang].dark}`;
+        const options = themeSelect.options;
+        if (translations[lang]) {
+            options[0].text = `🌓 ${translations[lang].system_theme}`;
+            options[1].text = `☀️ ${translations[lang].light}`;
+            options[2].text = `🌙 ${translations[lang].dark}`;
+        }
     }
 
     // Update calculator mode labels
