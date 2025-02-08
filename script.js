@@ -17,6 +17,24 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Update placeholder on initial load
     updatePlaceholder();
+
+    // Add theme switcher event listener
+    document.getElementById('theme').addEventListener('change', function() {
+        const theme = this.value;
+        applyTheme(theme);
+        localStorage.setItem('theme', theme);
+    });
+
+    // Add language switcher event listener
+    document.getElementById('language').addEventListener('change', function() {
+        const lang = this.value;
+        applyLanguage(lang);
+        localStorage.setItem('language', lang);
+    });
+
+    // Load saved theme and language
+    loadTheme();
+    loadLanguage();
 });
 
 // Tab switching functionality
@@ -1323,6 +1341,13 @@ function applyTheme(theme) {
     if (theme === 'system') {
         const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
         document.documentElement.setAttribute('data-theme', prefersDark ? 'dark' : 'light');
+        
+        // Add listener for system theme changes
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+            if (document.getElementById('theme').value === 'system') {
+                document.documentElement.setAttribute('data-theme', e.matches ? 'dark' : 'light');
+            }
+        });
     } else {
         document.documentElement.setAttribute('data-theme', theme);
     }
@@ -1337,7 +1362,122 @@ function loadLanguage() {
 
 // Apply language
 function applyLanguage(lang) {
-    // Add your language translation logic here
+    // Define translations
+    const translations = {
+        en: {
+            title: 'Unit Converter & Scientific Tools',
+            category: 'Measurement Category',
+            from: 'From',
+            to: 'To',
+            initial_message: 'Convert units by entering a value above',
+            history: 'Conversion History',
+            clear_history: 'Clear History',
+            favorites: 'Favorites',
+            search_placeholder: 'Search units or conversions...',
+            length: 'Length',
+            mass: 'Mass',
+            temperature: 'Temperature',
+            volume: 'Volume',
+            area: 'Area',
+            speed: 'Speed',
+            pace: 'Pace',
+            time: 'Time',
+            scientific: 'Scientific',
+            pressure: 'Pressure',
+            energy: 'Energy',
+            power: 'Power',
+            torque: 'Torque',
+            viscosity: 'Viscosity',
+            force: 'Force',
+            frequency: 'Frequency',
+            angle: 'Angle',
+            density: 'Density'
+        },
+        de: {
+            title: 'Einheitenumrechner & Wissenschaftliche Tools',
+            category: 'Messkategorie',
+            from: 'Von',
+            to: 'Nach',
+            initial_message: 'Geben Sie oben einen Wert ein',
+            history: 'Verlauf',
+            clear_history: 'Verlauf löschen',
+            favorites: 'Favoriten',
+            search_placeholder: 'Einheiten oder Umrechnungen suchen...',
+            length: 'Länge',
+            mass: 'Masse',
+            temperature: 'Temperatur',
+            volume: 'Volumen',
+            area: 'Fläche',
+            speed: 'Geschwindigkeit',
+            pace: 'Tempo',
+            time: 'Zeit',
+            scientific: 'Wissenschaftlich',
+            pressure: 'Druck',
+            energy: 'Energie',
+            power: 'Leistung',
+            torque: 'Drehmoment',
+            viscosity: 'Viskosität',
+            force: 'Kraft',
+            frequency: 'Frequenz',
+            angle: 'Winkel',
+            density: 'Dichte'
+        },
+        fr: {
+            title: 'Convertisseur d\'unités & Outils scientifiques',
+            category: 'Catégorie de mesure',
+            from: 'De',
+            to: 'Vers',
+            initial_message: 'Entrez une valeur ci-dessus',
+            history: 'Historique',
+            clear_history: 'Effacer l\'historique',
+            favorites: 'Favoris',
+            search_placeholder: 'Rechercher des unités ou des conversions...',
+            length: 'Longueur',
+            mass: 'Masse',
+            temperature: 'Température',
+            volume: 'Volume',
+            area: 'Surface',
+            speed: 'Vitesse',
+            pace: 'Allure',
+            time: 'Temps',
+            scientific: 'Scientifique',
+            pressure: 'Pression',
+            energy: 'Énergie',
+            power: 'Puissance',
+            torque: 'Couple',
+            viscosity: 'Viscosité',
+            force: 'Force',
+            frequency: 'Fréquence',
+            angle: 'Angle',
+            density: 'Densité'
+        },
+        // Add more languages as needed
+    };
+
+    // Apply translations
+    const elements = document.querySelectorAll('[data-lang]');
+    elements.forEach(element => {
+        const key = element.getAttribute('data-lang');
+        if (translations[lang] && translations[lang][key]) {
+            if (element.tagName === 'INPUT') {
+                element.placeholder = translations[lang][key];
+            } else {
+                element.textContent = translations[lang][key];
+            }
+        }
+    });
+
+    // Update placeholders
+    const elements2 = document.querySelectorAll('[data-lang-placeholder]');
+    elements2.forEach(element => {
+        const key = element.getAttribute('data-lang-placeholder');
+        if (translations[lang] && translations[lang][key]) {
+            element.placeholder = translations[lang][key];
+        }
+    });
+
+    // Update document language
+    document.documentElement.lang = lang;
 }
 
 // Add this function after the loadUnitsForCategory function
