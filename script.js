@@ -49,7 +49,12 @@ document.addEventListener('DOMContentLoaded', function() {
         // Load saved language
         const savedLanguage = localStorage.getItem('language') || 'en';
         languageSelect.value = savedLanguage;
-        applyLanguage(savedLanguage);
+        
+        // Apply language immediately on page load
+        setTimeout(() => {
+            applyLanguage(savedLanguage);
+            updatePlaceholder();
+        }, 0);
 
         // Add event listener
         languageSelect.addEventListener('change', function() {
@@ -58,6 +63,9 @@ document.addEventListener('DOMContentLoaded', function() {
             localStorage.setItem('language', lang);
             // Update placeholders after language change
             updatePlaceholder();
+            // Force update all translations
+            const event = new Event('languagechange');
+            document.dispatchEvent(event);
         });
     }
 });
@@ -1360,445 +1368,98 @@ function applyTheme(theme) {
 
 // Apply language
 function applyLanguage(lang) {
-    // Define translations
-    const translations = {
-        en: {
-            title: 'Unit Converter & Scientific Tools',
-            category: 'Measurement Category',
-            from: 'From',
-            to: 'To',
-            initial_message: 'Convert units by entering a value above',
-            history: 'Conversion History',
-            clear_history: 'Clear History',
-            favorites: 'Favorites',
-            search_placeholder: 'Search units or conversions...',
-            documentation: 'Documentation',
-            feedback: 'Feedback',
-            system_theme: 'System Theme',
-            light: 'Light',
-            dark: 'Dark',
-            converter_tab: 'Converter',
-            calculator_tab: 'Calculator',
-            physics_tab: 'Physics',
-            simple_mode: 'Simple',
-            scientific_mode: 'Scientific',
-            calculation_history: 'Calculation History',
-            // Physics tabs
-            freefall_tab: 'Free Fall',
-            suvat_tab: 'SUVAT Motion',
-            projectile_tab: 'Projectile Motion',
-            forces_tab: 'Forces',
-            // Physics labels
-            object_mass: 'Object Mass:',
-            object_size: 'Object Size (diameter):',
-            height: 'Height:',
-            initial_velocity: 'Initial Velocity:',
-            launch_angle: 'Launch Angle:',
-            initial_height: 'Initial Height:',
-            displacement: 'Displacement (s):',
-            acceleration: 'Acceleration:',
-            friction: 'Coefficient of Friction:',
-            calculate_button: 'Calculate',
-            // Units
-            length: 'Length',
-            mass: 'Mass',
-            temperature: 'Temperature',
-            volume: 'Volume',
-            area: 'Area',
-            speed: 'Speed',
-            pace: 'Pace',
-            time: 'Time',
-            scientific: 'Scientific',
-            pressure: 'Pressure',
-            energy: 'Energy',
-            power: 'Power',
-            torque: 'Torque',
-            viscosity: 'Viscosity',
-            force: 'Force',
-            frequency: 'Frequency',
-            angle: 'Angle',
-            density: 'Density',
-            // Footer
-            report_issues: 'Report Issues',
-            // Results
-            results: 'Results',
-            error_fill_fields: 'Please fill in all fields with valid numbers.',
-            error_provide_mass: 'Please provide the mass.',
-            error_velocity_angle: 'Please provide initial velocity and angle.',
-            error_three_values: 'Please provide at least 3 values.',
-            // Add placeholder examples
-            example_height_meters: "e.g., 1.8 (height in meters)",
-            example_distance_km: "e.g., 5 (distance in km)",
-            example_weight_kg: "e.g., 75 (body weight in kg)",
-            example_temp_celsius: "e.g., 37 (body temp in °C)",
-            example_volume_liters: "e.g., 2 (soda bottle in L)"
-        },
-        de: {
-            title: 'Einheitenumrechner & Wissenschaftliche Tools',
-            category: 'Messkategorie',
-            from: 'Von',
-            to: 'Nach',
-            initial_message: 'Geben Sie oben einen Wert ein',
-            history: 'Verlauf',
-            clear_history: 'Verlauf löschen',
-            favorites: 'Favoriten',
-            search_placeholder: 'Einheiten oder Umrechnungen suchen...',
-            documentation: 'Dokumentation',
-            feedback: 'Feedback',
-            system_theme: 'System-Design',
-            light: 'Hell',
-            dark: 'Dunkel',
-            converter_tab: 'Umrechner',
-            calculator_tab: 'Rechner',
-            physics_tab: 'Physik',
-            simple_mode: 'Einfach',
-            scientific_mode: 'Wissenschaftlich',
-            calculation_history: 'Berechnungsverlauf',
-            // Physics tabs
-            freefall_tab: 'Freier Fall',
-            suvat_tab: 'SUVAT-Bewegung',
-            projectile_tab: 'Wurfbewegung',
-            forces_tab: 'Kräfte',
-            // Physics labels
-            object_mass: 'Objektmasse:',
-            object_size: 'Objektgröße (Durchmesser):',
-            height: 'Höhe:',
-            initial_velocity: 'Anfangsgeschwindigkeit:',
-            launch_angle: 'Abschusswinkel:',
-            initial_height: 'Anfangshöhe:',
-            displacement: 'Verschiebung (s):',
-            acceleration: 'Beschleunigung:',
-            friction: 'Reibungskoeffizient:',
-            calculate_button: 'Berechnen',
-            // Units
-            length: 'Länge',
-            mass: 'Masse',
-            temperature: 'Temperatur',
-            volume: 'Volumen',
-            area: 'Fläche',
-            speed: 'Geschwindigkeit',
-            pace: 'Tempo',
-            time: 'Zeit',
-            scientific: 'Wissenschaftlich',
-            pressure: 'Druck',
-            energy: 'Energie',
-            power: 'Leistung',
-            torque: 'Drehmoment',
-            viscosity: 'Viskosität',
-            force: 'Kraft',
-            frequency: 'Frequenz',
-            angle: 'Winkel',
-            density: 'Dichte',
-            // Footer
-            report_issues: 'Probleme melden',
-            // Results
-            results: 'Ergebnisse',
-            error_fill_fields: 'Bitte füllen Sie alle Felder mit gültigen Zahlen aus.',
-            error_provide_mass: 'Bitte geben Sie die Masse an.',
-            error_velocity_angle: 'Bitte geben Sie Anfangsgeschwindigkeit und Winkel an.',
-            error_three_values: 'Bitte geben Sie mindestens 3 Werte an.',
-            // Add placeholder examples
-            example_height_meters: "z.B. 1,8 (Körpergröße in Metern)",
-            example_distance_km: "z.B. 5 (Entfernung in km)",
-            example_weight_kg: "z.B. 75 (Körpergewicht in kg)",
-            example_temp_celsius: "z.B. 37 (Körpertemperatur in °C)",
-            example_volume_liters: "z.B. 2 (Getränkeflasche in L)"
-        },
-        fr: {
-            title: 'Convertisseur d\'unités & Outils scientifiques',
-            category: 'Catégorie de mesure',
-            from: 'De',
-            to: 'Vers',
-            initial_message: 'Entrez une valeur ci-dessus',
-            history: 'Historique',
-            clear_history: 'Effacer l\'historique',
-            favorites: 'Favoris',
-            search_placeholder: 'Rechercher des unités ou des conversions...',
-            documentation: 'Documentation',
-            feedback: 'Retour d\'information',
-            system_theme: 'Thème système',
-            light: 'Clair',
-            dark: 'Sombre',
-            converter_tab: 'Convertisseur',
-            calculator_tab: 'Calculatrice',
-            physics_tab: 'Physique',
-            simple_mode: 'Simple',
-            scientific_mode: 'Scientifique',
-            calculation_history: 'Historique des calculs',
-            // Physics tabs
-            freefall_tab: 'Chute libre',
-            suvat_tab: 'Mouvement SUVAT',
-            projectile_tab: 'Mouvement projectile',
-            forces_tab: 'Forces',
-            // Physics labels
-            object_mass: 'Masse de l\'objet:',
-            object_size: 'Taille de l\'objet (diamètre):',
-            height: 'Hauteur:',
-            initial_velocity: 'Vitesse initiale:',
-            launch_angle: 'Angle de lancement:',
-            initial_height: 'Hauteur initiale:',
-            displacement: 'Déplacement (s):',
-            acceleration: 'Accélération:',
-            friction: 'Coefficient de frottement:',
-            calculate_button: 'Calculer',
-            // Units
-            length: 'Longueur',
-            mass: 'Masse',
-            temperature: 'Température',
-            volume: 'Volume',
-            area: 'Surface',
-            speed: 'Vitesse',
-            pace: 'Allure',
-            time: 'Temps',
-            scientific: 'Scientifique',
-            pressure: 'Pression',
-            energy: 'Énergie',
-            power: 'Puissance',
-            torque: 'Couple',
-            viscosity: 'Viscosité',
-            force: 'Force',
-            frequency: 'Fréquence',
-            angle: 'Angle',
-            density: 'Densité',
-            // Footer
-            report_issues: 'Signaler des problèmes',
-            // Results
-            results: 'Résultats',
-            error_fill_fields: 'Veuillez remplir tous les champs avec des nombres valides.',
-            error_provide_mass: 'Veuillez fournir la masse.',
-            error_velocity_angle: 'Veuillez fournir la vitesse initiale et l\'angle.',
-            error_three_values: 'Veuillez fournir au moins 3 valeurs.',
-            // Add placeholder examples
-            example_height_meters: "ex: 1,8 (taille en mètres)",
-            example_distance_km: "ex: 5 (distance en km)",
-            example_weight_kg: "ex: 75 (poids en kg)",
-            example_temp_celsius: "ex: 37 (température en °C)",
-            example_volume_liters: "ex: 2 (bouteille en L)"
-        },
-        it: {
-            title: 'Convertitore di unità e strumenti scientifici',
-            category: 'Categoria di misura',
-            from: 'Da',
-            to: 'A',
-            initial_message: 'Inserisci un valore sopra',
-            history: 'Cronologia',
-            clear_history: 'Cancella cronologia',
-            favorites: 'Preferiti',
-            search_placeholder: 'Cerca unità o conversioni...',
-            documentation: 'Documentazione',
-            feedback: 'Feedback',
-            system_theme: 'Tema di sistema',
-            light: 'Chiaro',
-            dark: 'Scuro',
-            converter_tab: 'Convertitore',
-            calculator_tab: 'Calcolatrice',
-            physics_tab: 'Fisica',
-            simple_mode: 'Semplice',
-            scientific_mode: 'Scientifico',
-            calculation_history: 'Cronologia calcoli',
-            // Physics tabs
-            freefall_tab: 'Caduta libera',
-            suvat_tab: 'Moto SUVAT',
-            projectile_tab: 'Moto del proiettile',
-            forces_tab: 'Forze',
-            // Physics labels
-            object_mass: 'Massa dell\'oggetto:',
-            object_size: 'Dimensione dell\'oggetto (diametro):',
-            height: 'Altezza:',
-            initial_velocity: 'Velocità iniziale:',
-            launch_angle: 'Angolo di lancio:',
-            initial_height: 'Altezza iniziale:',
-            displacement: 'Spostamento (s):',
-            acceleration: 'Accelerazione:',
-            friction: 'Coefficiente di attrito:',
-            calculate_button: 'Calcola',
-            // Units
-            length: 'Lunghezza',
-            mass: 'Massa',
-            temperature: 'Temperatura',
-            volume: 'Volume',
-            area: 'Area',
-            speed: 'Velocità',
-            pace: 'Ritmo',
-            time: 'Tempo',
-            scientific: 'Scientifico',
-            pressure: 'Pressione',
-            energy: 'Energia',
-            power: 'Potenza',
-            torque: 'Coppia',
-            viscosity: 'Viscosità',
-            force: 'Forza',
-            frequency: 'Frequenza',
-            angle: 'Angolo',
-            density: 'Densità',
-            // Footer
-            report_issues: 'Segnala problemi',
-            // Results
-            results: 'Risultati',
-            error_fill_fields: 'Inserisci numeri validi in tutti i campi.',
-            error_provide_mass: 'Inserisci la massa.',
-            error_velocity_angle: 'Inserisci velocità iniziale e angolo.',
-            error_three_values: 'Inserisci almeno 3 valori.',
-            // Add placeholder examples
-            example_height_meters: "es: 1,8 (altezza in metri)",
-            example_distance_km: "es: 5 (distanza in km)",
-            example_weight_kg: "es: 75 (peso in kg)",
-            example_temp_celsius: "es: 37 (temperatura in °C)",
-            example_volume_liters: "es: 2 (bottiglia in L)"
-        },
-        es: {
-            title: 'Conversor de unidades y herramientas científicas',
-            category: 'Categoría de medida',
-            from: 'De',
-            to: 'A',
-            initial_message: 'Ingresa un valor arriba',
-            history: 'Historial',
-            clear_history: 'Borrar historial',
-            favorites: 'Favoritos',
-            search_placeholder: 'Buscar unidades o conversiones...',
-            documentation: 'Documentación',
-            feedback: 'Comentarios',
-            system_theme: 'Tema del sistema',
-            light: 'Claro',
-            dark: 'Oscuro',
-            converter_tab: 'Conversor',
-            calculator_tab: 'Calculadora',
-            physics_tab: 'Física',
-            simple_mode: 'Simple',
-            scientific_mode: 'Científico',
-            calculation_history: 'Historial de cálculos',
-            // Physics tabs
-            freefall_tab: 'Caída libre',
-            suvat_tab: 'Movimiento SUVAT',
-            projectile_tab: 'Movimiento proyectil',
-            forces_tab: 'Fuerzas',
-            // Physics labels
-            object_mass: 'Masa del objeto:',
-            object_size: 'Tamaño del objeto (diámetro):',
-            height: 'Altura:',
-            initial_velocity: 'Velocidad inicial:',
-            launch_angle: 'Ángulo de lanzamiento:',
-            initial_height: 'Altura inicial:',
-            displacement: 'Desplazamiento (s):',
-            acceleration: 'Aceleración:',
-            friction: 'Coeficiente de fricción:',
-            calculate_button: 'Calcular',
-            // Units
-            length: 'Longitud',
-            mass: 'Masa',
-            temperature: 'Temperatura',
-            volume: 'Volumen',
-            area: 'Área',
-            speed: 'Velocidad',
-            pace: 'Ritmo',
-            time: 'Tiempo',
-            scientific: 'Científico',
-            pressure: 'Presión',
-            energy: 'Energía',
-            power: 'Potencia',
-            torque: 'Torque',
-            viscosity: 'Viscosidad',
-            force: 'Fuerza',
-            frequency: 'Frecuencia',
-            angle: 'Ángulo',
-            density: 'Densidad',
-            // Footer
-            report_issues: 'Reportar problemas',
-            // Results
-            results: 'Resultados',
-            error_fill_fields: 'Por favor, completa todos los campos con números válidos.',
-            error_provide_mass: 'Por favor, proporciona la masa.',
-            error_velocity_angle: 'Por favor, proporciona velocidad inicial y ángulo.',
-            error_three_values: 'Por favor, proporciona al menos 3 valores.',
-            // Add placeholder examples
-            example_height_meters: "ej: 1,8 (altura en metros)",
-            example_distance_km: "ej: 5 (distancia en km)",
-            example_weight_kg: "ej: 75 (peso en kg)",
-            example_temp_celsius: "ej: 37 (temperatura en °C)",
-            example_volume_liters: "ej: 2 (botella en L)"
-        }
-    };
+    // First ensure the language is valid
+    if (!translations[lang]) {
+        console.warn(`Language ${lang} not found, falling back to English`);
+        lang = 'en';
+    }
+
+    // Get the translations for the selected language
+    const currentTranslations = translations[lang];
 
     // Apply translations to all elements with data-lang attribute
-    const elements = document.querySelectorAll('[data-lang]');
-    elements.forEach(element => {
+    document.querySelectorAll('[data-lang]').forEach(element => {
         const key = element.getAttribute('data-lang');
-        if (translations[lang] && translations[lang][key]) {
+        if (currentTranslations[key]) {
             if (element.tagName === 'INPUT' && element.hasAttribute('placeholder')) {
-                element.placeholder = translations[lang][key];
+                element.placeholder = currentTranslations[key];
             } else {
-                element.textContent = translations[lang][key];
+                element.textContent = currentTranslations[key];
             }
         }
     });
 
     // Update placeholders for elements with data-lang-placeholder
-    const placeholderElements = document.querySelectorAll('[data-lang-placeholder]');
-    placeholderElements.forEach(element => {
+    document.querySelectorAll('[data-lang-placeholder]').forEach(element => {
         const key = element.getAttribute('data-lang-placeholder');
-        if (translations[lang] && translations[lang][key]) {
-            element.placeholder = translations[lang][key];
+        if (currentTranslations[key]) {
+            element.placeholder = currentTranslations[key];
         }
     });
 
     // Update theme selector options
     const themeSelect = document.getElementById('theme');
-    if (themeSelect) {
-        const options = themeSelect.options;
-        if (translations[lang]) {
-            options[0].text = `🌓 ${translations[lang].system_theme}`;
-            options[1].text = `☀️ ${translations[lang].light}`;
-            options[2].text = `🌙 ${translations[lang].dark}`;
-        }
+    if (themeSelect && currentTranslations) {
+        themeSelect.options[0].text = `🌓 ${currentTranslations.system_theme}`;
+        themeSelect.options[1].text = `☀️ ${currentTranslations.light}`;
+        themeSelect.options[2].text = `🌙 ${currentTranslations.dark}`;
     }
 
     // Update calculator mode labels
     const simpleModeLabel = document.querySelector('.mode-label:first-child');
     const scientificModeLabel = document.querySelector('.mode-label:last-child');
-    if (simpleModeLabel && scientificModeLabel && translations[lang]) {
-        simpleModeLabel.textContent = translations[lang].simple_mode;
-        scientificModeLabel.textContent = translations[lang].scientific_mode;
+    if (simpleModeLabel && scientificModeLabel && currentTranslations) {
+        simpleModeLabel.textContent = currentTranslations.simple_mode;
+        scientificModeLabel.textContent = currentTranslations.scientific_mode;
     }
 
     // Update physics calculator error messages
-    if (document.getElementById('freefallResult') && translations[lang]) {
-        document.getElementById('freefallResult').textContent = translations[lang].error_fill_fields;
+    const freefallResult = document.getElementById('freefallResult');
+    if (freefallResult && currentTranslations) {
+        freefallResult.textContent = currentTranslations.error_fill_fields;
     }
 
     // Update document language
     document.documentElement.lang = lang;
+
+    // Update placeholders
+    updatePlaceholder();
 }
 
-// Update the updatePlaceholder function to use translations
+// Update the updatePlaceholder function
 function updatePlaceholder() {
     const category = document.getElementById('category').value;
     const fromUnit = document.getElementById('fromUnit').value;
     const fromInput = document.getElementById('fromValue');
     const currentLang = document.getElementById('language').value;
     
-    // Get the current language translations
-    const langTranslations = translations[currentLang] || translations['en'];
+    // Get the current language translations, fallback to English if not found
+    const currentTranslations = translations[currentLang] || translations['en'];
     
     // Example values for different categories with translations
     const examples = {
         length: {
-            meter: langTranslations.example_height_meters,
-            kilometer: langTranslations.example_distance_km
-            // ... other length units can be added similarly
+            meter: currentTranslations.example_height_meters,
+            kilometer: currentTranslations.example_distance_km,
+            // Add translations for other length units
+            centimeter: currentTranslations.example_height_meters?.replace('1,8', '180').replace('1.8', '180'),
+            millimeter: currentTranslations.example_height_meters?.replace('1,8', '1800').replace('1.8', '1800')
         },
         mass: {
-            kilogram: langTranslations.example_weight_kg
-            // ... other mass units
+            kilogram: currentTranslations.example_weight_kg,
+            gram: currentTranslations.example_weight_kg?.replace('75', '75000'),
+            milligram: currentTranslations.example_weight_kg?.replace('75', '75000000')
         },
         temperature: {
-            celsius: langTranslations.example_temp_celsius
-            // ... other temperature units
+            celsius: currentTranslations.example_temp_celsius,
+            fahrenheit: currentTranslations.example_temp_celsius?.replace('37', '98.6'),
+            kelvin: currentTranslations.example_temp_celsius?.replace('37', '310.15')
         },
         volume: {
-            liter: langTranslations.example_volume_liters
-            // ... other volume units
+            liter: currentTranslations.example_volume_liters,
+            milliliter: currentTranslations.example_volume_liters?.replace('2', '2000'),
+            cubicMeter: currentTranslations.example_volume_liters?.replace('2', '0.002')
         }
-        // ... other categories can be added similarly
     };
 
     // Get example for current category and unit
@@ -1806,6 +1467,6 @@ function updatePlaceholder() {
         fromInput.placeholder = examples[category][fromUnit];
     } else {
         // Default placeholder using the current language
-        fromInput.placeholder = `${langTranslations.from}: ${fromUnit}`;
+        fromInput.placeholder = `${currentTranslations.from}: ${fromUnit}`;
     }
 }
